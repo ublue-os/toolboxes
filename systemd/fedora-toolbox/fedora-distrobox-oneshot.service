@@ -1,0 +1,8 @@
+[Unit]
+Description=Fedora Toolbox for your distrobox fun
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/distrobox assemble create --replace -f /etc/distrobox/distrobox.ini -n fedora-toolbox
+ExecStart=/usr/bin/distrobox enter fedora-toolbox 
+RemainAfterExit=true
