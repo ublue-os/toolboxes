@@ -3,6 +3,6 @@ Description=Wolfi Toolbox for your distrobox fun
 
 [Service]
 Type=oneshot
-ExecStart=/usr/bin/distrobox assemble create --replace -f /etc/distrobox/distrobox.ini -n wolfi-toolbox
-ExecStart=/usr/bin/distrobox enter wolfi-toolbox 
+ExecStart=/usr/bin/distrobox assemble create --replace -f /etc/distrobox/ubuntu-distrobox.ini -n ubuntu-toolbox
+ExecStart=/usr/bin/distrobox enter ubuntu-toolbox 
 RemainAfterExit=true
