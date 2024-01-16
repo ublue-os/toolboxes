@@ -1,4 +1,17 @@
 brew
 command-not-found
+cosign
+dive
+fzf
+gh
 git
+grype
+htop
+nano
+neovim
+ollama
+powertop
+ripgrep
+skopeo
 sudo-rs
+yq
