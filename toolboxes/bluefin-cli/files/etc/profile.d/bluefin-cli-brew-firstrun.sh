@@ -1,16 +1,12 @@
-if test "$(id -u)" -gt "0" && test ! -f /home/linuxbrew/.firstrun && test -d /home/linuxbrew/.linuxbrew/Cellar; then
-  touch /home/linuxbrew/.firstrun
-  if test -n "$(ls -A /home/linuxbrew/.linuxbrew/Cellar)"; then
-    echo "Relinking Homebrew Cellar"
-    /home/linuxbrew/.linuxbrew/bin/brew list -1 | while read line
-    do
-      /home/linuxbrew/.linuxbrew/bin/brew unlink $line
-      /home/linuxbrew/.linuxbrew/bin/brew link $line
-    done
-    echo "Reinstalling explicictly installed Homebrew packages"
-    /home/linuxbrew/.linuxbrew/bin/brew leaves | while read line
-    do
-      /home/linuxbrew/.linuxbrew/bin/brew reinstall $line
-    done
+if test "$(id -u)" -gt "0" && test ! -f /etc/linuxbrew.firstrun; then
+  echo "First Run Setup"
+  if test -d /home/linuxbrew; then
+    echo "Getting newest repo version of brew"
+    su-exec root cp -R /home/homebrew/.linuxbrew /home/linuxbrew/
+    echo "Making sure linuxbrew is owned by ${USER}"
+    su-exec root chown -R $UID /home/linuxbrew
   fi
+  echo "Setting up sudo for ${USER}"
+  echo "#${UID} ALL = (root) NOPASSWD:ALL" | su-exec root tee -a /etc/sudoers > /dev/null
+  su-exec root touch /etc/linuxbrew.firstrun
 fi

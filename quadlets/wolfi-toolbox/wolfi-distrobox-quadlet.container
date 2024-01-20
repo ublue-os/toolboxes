@@ -4,21 +4,19 @@ Description=Wolfi Toolbox for your distrobox fun
 [Container]
 Annotation=run.oci.keep_original_groups=1
 AutoUpdate=registry
-ContainerName=wofli-distrobox-quadlet
+ContainerName=wolfi-quadlet
 Environment=SHELL=%s
 Environment=HOME=%h
 Environment=XDG_RUNTIME_DIR=%t
 Environment=USER=%u
 Environment=USERNAME=%u
 Environment=container=podman
-Exec=--verbose --name %u  --user %U --group %G --home %h --init "0" --nvidia "1" --pre-init-hooks "" --additional-packages "" -- ""
+Exec=--verbose --name %u  --user %U --group %G --home %h --init "0" --nvidia "1" --pre-init-hooks " " --additional-packages " " -- " "
 Image=ghcr.io/ublue-os/wolfi-toolbox:latest
-HostName=wolfi-toolbox.%l
+HostName=wolfi-quadlet.%l
 Network=host
 PodmanArgs=--entrypoint /usr/bin/entrypoint
 PodmanArgs=--ipc host
-PodmanArgs=--label com.github.containers.toolbox=true
-PodmanArgs=--label manager=distrobox
 PodmanArgs=--no-hosts
 PodmanArgs=--privileged
 PodmanArgs=--security-opt label=disable
@@ -28,9 +26,6 @@ User=root:root
 UserNS=keep-id
 Volume=/:/run/host:rslave
 Volume=/tmp:/tmp:rslave
-Volume=/usr/bin/distrobox-init:/usr/bin/entrypoint:ro
-Volume=/usr/bin/distrobox-export:/usr/bin/distrobox-export:ro
-Volume=/usr/bin/distrobox-host-exec:/usr/bin/distrobox-host-exec:ro
 Volume=%h:%h:rslave
 Volume=/dev:/dev:rslave
 Volume=/sys:/sys:rslave
