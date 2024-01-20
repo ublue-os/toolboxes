@@ -19,6 +19,7 @@ PodmanArgs=--entrypoint /usr/bin/entrypoint
 PodmanArgs=--ipc host
 PodmanArgs=--no-hosts
 PodmanArgs=--privileged
+PodmanArgs=--label manager=distrobox
 PodmanArgs=--security-opt label=disable
 PodmanArgs=--security-opt apparmor=unconfined
 Ulimit=host
