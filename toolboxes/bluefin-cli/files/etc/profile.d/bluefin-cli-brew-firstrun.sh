@@ -1,7 +1,7 @@
 if test "$(id -u)" -gt "0" && test ! -f /etc/linuxbrew.firstrun; then
   echo "First Run Setup"
   if test ! -d /home/linuxbrew; then
-    mv /home/homebrew /home/linuxbrew
+    su-exec root mv /home/homebrew /home/linuxbrew
   else
     echo "Getting newest repo version of brew"
     su-exec root cp -R /home/homebrew/.linuxbrew /home/linuxbrew/
