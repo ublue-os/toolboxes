@@ -1,6 +1,7 @@
 FROM ghcr.io/ublue-os/wolfi-toolbox
 
-LABEL usage="This image is meant to be used with the Toolbox or Distrobox commands" \
+LABEL com.github.containers.toolbox="true" \
+      usage="This image is meant to be used with the Toolbox or Distrobox commands" \
       summary="A new cloud-native terminal experience powered by Wolfi and Homebrew" \
       maintainer="jorge.castro@gmail.com"
 
