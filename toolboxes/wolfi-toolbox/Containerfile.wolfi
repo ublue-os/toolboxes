@@ -1,7 +1,8 @@
 FROM cgr.dev/chainguard/wolfi-base
 # Thanks to Nuno do Carmo for the initial prototype
 
-LABEL usage="This image is meant to be used with the Toolbox or Distrobox command" \
+LABEL com.github.containers.toolbox="true" \
+      usage="This image is meant to be used with the Toolbox or Distrobox command" \
       summary="A blank Wolfi distrobox, suitable for development" \
       maintainer="jorge.castro@gmail.com"
 
