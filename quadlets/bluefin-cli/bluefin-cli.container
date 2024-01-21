@@ -38,4 +38,3 @@ Volume=/var/home/%u:/var/home/%u:rslave
 Volume=%t:%t:rslave
 Volume=/etc/hosts:/etc/hosts:ro
 Volume=/etc/resolv.conf:/etc/resolv.conf:ro
-Volume=bluefin-cli.volume:/home/linuxbrew
