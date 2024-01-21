@@ -6,7 +6,7 @@ LABEL com.github.containers.toolbox="true" \
       maintainer="jorge.castro@gmail.com"
 
 COPY ./toolboxes/bluefin-cli/packages.bluefin-cli /toolbox-packages
-COPY ./toolboxes/bluefin-cli/files/etc /etc
+COPY ./toolboxes/bluefin-cli/files /
 
 # Update image, Install Packages, and move /home/linuxbrew
 RUN apk update && \

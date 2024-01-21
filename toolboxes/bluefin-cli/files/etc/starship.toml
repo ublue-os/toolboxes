@@ -1,0 +1,21 @@
+[character]
+success_symbol = '[\$](bold green dimmed)'
+error_symbol = '[\$](bold red)'
+
+[container]
+symbol='📦'
+format='[$symbol](bold green dimmed) '
+
+[directory]
+style = 'bold cyan dimmed'
+
+[hostname]
+ssh_only = false
+style = 'green bold dimmed'
+format = '[$ssh_symbol$hostname]($style) '
+
+[username]
+style_user = 'green bold dimmed'
+style_root = 'red bold'
+format = '[$user]($style)@'
+show_always = true
