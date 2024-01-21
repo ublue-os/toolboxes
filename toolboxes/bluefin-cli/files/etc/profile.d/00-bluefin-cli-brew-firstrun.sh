@@ -5,11 +5,7 @@ if test "$(id -u)" -gt "0"; then
   if test ! -f /etc/linuxbrew.firstrun; then
     printf "\nBluefin-CLI First Run Setup\n\n"
     printf "Setting up sudo for ${bold}${USER}${normal}...\t\t\t "
-    su-exec root chmod +r /etc/sudoers
-    if grep -qv "${UID}" /etc/sudoers; then
-      echo "#${UID} ALL = (root) NOPASSWD:ALL" | su-exec root tee -a /etc/sudoers > /dev/null
-    fi
-    su-exec root chmod 600 /etc/sudoers
+    echo "#${UID} ALL = (root) NOPASSWD:ALL" | su-exec root tee -a /etc/sudoers > /dev/null
     printf "${green}[ OK ]${normal}\n"
   fi
 
