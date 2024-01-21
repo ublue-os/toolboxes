@@ -1,6 +1,8 @@
 brew
 command-not-found
 cosign
+eza
 git
 skopeo
+starship
 sudo-rs
