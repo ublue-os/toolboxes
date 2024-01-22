@@ -11,6 +11,7 @@
 # Prevent doublesourcing
 if [ -z "$PROFILESOURCED" ] && [ "$PS1" ]; then
   PROFILESOURCED="Y"
+  . /etc/profile
 fi
 
 if [ -z "$BASHRCSOURCED" ]; then
