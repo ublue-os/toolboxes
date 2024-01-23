@@ -22,7 +22,7 @@ if test "$(id -u)" -gt "0"; then
     su-exec root chown -R $UID /home/linuxbrew
     printf "${green}[ OK ]${normal}\n"
   fi
-  if test ! -d /usr/local/share/bash-completion/completions
+  if test ! -d /usr/local/share/bash-completion/completions; then
     printf "Setting up Tab-Completions...\t\t\t "
     su-exec root mkdir -p /usr/local/share/bash-completion
     su-exec root mount --bind /run/host/usr/share/bash-completion /usr/local/share/bash-completion
