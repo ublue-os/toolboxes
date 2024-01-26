@@ -1,6 +1,6 @@
 # toolboxes
 
-Centralized repository of containers designed for Toolbox/Distrobox. These toolboxes strive for:
+Centralized repository of containers designed for Toolbox/Distrobox with batteries included. These toolboxes strive for:
 
 - Instant launch
 - Include quadlets and systemd service units for management
@@ -44,7 +44,7 @@ The default configuration destroys and updates this container daily so that the 
 
 Updates to brew itself happen automatically when the container rebuilds. Brew will automatically upgrade packages as you use it. It is **strongly recommended** to maintain a backup of your brew package list via the [brew bundle](https://docs.brew.sh/Manpage#bundle-subcommand) subcommand.  
 
-The WolfiOS(https://edu.chainguard.dev/open-source/wolfi/overview/) apk package manager is preferred for fully declarative setups with [boxkit](https://github.com/ublue-os/boxkit). You can file package requests on the [WolfiOS repository](https://github.com/wolfi-dev/) for packages that you may need. 
+The [WolfiOS](https://edu.chainguard.dev/open-source/wolfi/overview/) apk package manager is preferred for fully declarative setups with [boxkit](https://github.com/ublue-os/boxkit). You can file package requests on the [WolfiOS repository](https://github.com/wolfi-dev/) for packages that you may need. 
 
 The intended endstate of `bluefin-cli` is a fully automated declarative config managed via git using Wolfi packages for clean rebuilds daily. `brew` is used to fill out the "long tail" of existing software.
 
