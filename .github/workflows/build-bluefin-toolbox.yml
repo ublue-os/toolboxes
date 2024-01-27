@@ -25,7 +25,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        tag: ["latest", "latest-dev"]
+        tag: ["latest", "testing"]
     steps:
       # Checkout push-to-registry action GitHub repository
       - name: Checkout Push to Registry action
