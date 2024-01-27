@@ -9,6 +9,7 @@ env:
     IMAGE_NAME: wolfi-toolbox
     IMAGE_TAGS: latest
     IMAGE_REGISTRY: ghcr.io/${{ github.repository_owner }}
+    SOURCE_IMAGE_REGISTRY: cgr.dev/chainguard
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
@@ -24,15 +25,25 @@ jobs:
       id-token: write
     strategy:
       fail-fast: false
+      matrix:
+        tag: ["latest", "latest-dev"]
     steps:
       # Checkout push-to-registry action GitHub repository
       - name: Checkout Push to Registry action
         uses: actions/checkout@v4
 
+      - name: Determine base container
+        run: |
+          if [[ "${{ matrix.tag }}" == "latest" ]]; then
+            echo "SOURCE_IMAGE_NAME=wolfi-base" >> $GITHUB_ENV
+          elif [[ "${{ matrix.tag }}" == "latest-dev" ]]; then
+            echo "SOURCE_IMAGE_NAME=sdk" >> $GITHUB_ENV
+          fi
+
       - name: Verify base container
         uses: EyeCantCU/cosign-action/verify@v0.2.2
         with:
-          containers: wolfi-base
+          containers: ${{ env.SOURCE_IMAGE_NAME }}
           cert-identity: https://github.com/chainguard-images/images/.github/workflows/release.yaml@refs/heads/main
           oidc-issuer: https://token.actions.githubusercontent.com
           registry: cgr.dev/chainguard
@@ -55,10 +66,13 @@ jobs:
           containerfiles: |
             ./toolboxes/wolfi-toolbox/Containerfile.wolfi
           image: ${{ env.IMAGE_NAME }}
-          tags: ${{ env.IMAGE_TAGS }}
+          tags: ${{ matrix.tag }}
+          build-args: |
+            SOURCE_IMAGE_NAME: ${{ env.SOURCE_IMAGE_NAME }}
+            SOURCE_IMAGE_REGISTRY: ${{ env.SOURCE_IMAGE_REGISTRY }}
           labels: ${{ steps.meta.outputs.labels }}
           oci: false
-          
+
       # Workaround bug where capital letters in your GitHub username make it impossible to push to GHCR.
       # https://github.com/macbre/push-to-ghcr/issues/12
       - name: Lowercase Registry
@@ -81,7 +95,7 @@ jobs:
           registry: ${{ steps.registry_case.outputs.lowercase }}
           username: ${{ env.REGISTRY_USER }}
           password: ${{ env.REGISTRY_PASSWORD }}
-            
+
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
         if: github.event_name != 'pull_request'
@@ -89,7 +103,7 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-            
+
       # Sign container
       - uses: sigstore/cosign-installer@v3.3.0
         if: github.event_name != 'pull_request'

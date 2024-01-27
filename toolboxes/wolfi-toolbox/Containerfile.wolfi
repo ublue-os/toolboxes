@@ -1,4 +1,8 @@
-FROM cgr.dev/chainguard/wolfi-base
+ARG SOURCE_IMAGE_NAME="${SOURCE_IMAGE_NAME:-wolfi-base}"
+ARG SOURCE_IMAGE_REGISTRY="${SOURCE_IMAGE_REGISTRY:-cgr.dev/chainguard}"
+ARG SOURCE_IMAGE="${SOURCE_IMAGE_REGISTRY}/${SOURCE_IMAGE_NAME}"
+
+FROM $SOURCE_IMAGE:latest
 # Thanks to Nuno do Carmo for the initial prototype
 
 LABEL com.github.containers.toolbox="true" \
