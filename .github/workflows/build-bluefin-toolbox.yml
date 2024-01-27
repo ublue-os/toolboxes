@@ -6,8 +6,8 @@ on:
   merge_group:
   workflow_dispatch:
 env:
+    SOURCE_IMAGE_NAME: wolfi-toolbox
     IMAGE_NAME: bluefin-cli
-    IMAGE_TAGS: latest
     IMAGE_REGISTRY: ghcr.io/${{ github.repository_owner }}
 
 concurrency:
@@ -24,6 +24,8 @@ jobs:
       id-token: write
     strategy:
       fail-fast: false
+      matrix:
+        tag: ["latest", "testing"]
     steps:
       # Checkout push-to-registry action GitHub repository
       - name: Checkout Push to Registry action
@@ -32,10 +34,7 @@ jobs:
       - name: Verify base container
         uses: EyeCantCU/cosign-action/verify@v0.2.2
         with:
-          containers: wolfi-base
-          cert-identity: https://github.com/chainguard-images/images/.github/workflows/release.yaml@refs/heads/main
-          oidc-issuer: https://token.actions.githubusercontent.com
-          registry: cgr.dev/chainguard
+          containers: ${{ env.SOURCE_IMAGE_NAME}}:${{ matrix.tag }}
 
       # Build metadata
       - name: Image Metadata
@@ -55,10 +54,14 @@ jobs:
           containerfiles: |
             ./toolboxes/bluefin-cli/Containerfile.bluefin-cli
           image: ${{ env.IMAGE_NAME }}
-          tags: ${{ env.IMAGE_TAGS }}
+          tags: ${{ matrix.tag }}
+          build-args: |
+            SOURCE_IMAGE_NAME=${{ env.SOURCE_IMAGE_NAME }}
+            SOURCE_IMAGE_REGISTRY=${{ env.IMAGE_REGISTRY }}
+            IMAGE_TAG=${{ matrix.tag }}
           labels: ${{ steps.meta.outputs.labels }}
           oci: false
-          
+
       # Workaround bug where capital letters in your GitHub username make it impossible to push to GHCR.
       # https://github.com/macbre/push-to-ghcr/issues/12
       - name: Lowercase Registry
@@ -81,7 +84,7 @@ jobs:
           registry: ${{ steps.registry_case.outputs.lowercase }}
           username: ${{ env.REGISTRY_USER }}
           password: ${{ env.REGISTRY_PASSWORD }}
-            
+
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
         if: github.event_name != 'pull_request'
@@ -89,7 +92,7 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-            
+
       # Sign container
       - uses: sigstore/cosign-installer@v3.3.0
         if: github.event_name != 'pull_request'
