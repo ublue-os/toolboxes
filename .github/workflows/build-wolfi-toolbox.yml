@@ -6,7 +6,6 @@ on:
   merge_group:
   workflow_dispatch:
 env:
-    IMAGE_NAME: wolfi-toolbox
     IMAGE_TAGS: latest
     IMAGE_REGISTRY: ghcr.io/${{ github.repository_owner }}
     SOURCE_IMAGE_REGISTRY: cgr.dev/chainguard
@@ -26,21 +25,21 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        tag: ["latest", "testing"]
+        image_name: ["wolfi-toolbox", "wolfi-dx-toolbox"]
     steps:
       # Checkout push-to-registry action GitHub repository
       - name: Checkout Push to Registry action
         uses: actions/checkout@v4
 
-      - name: Determine base container
+      - name: Determine base image
         run: |
-          if [[ "${{ matrix.tag }}" == "latest" ]]; then
+          if [[ "${{ matrix.image_name }}" == "wolfi-toolbox" ]]; then
             echo "SOURCE_IMAGE_NAME=wolfi-base" >> $GITHUB_ENV
-          elif [[ "${{ matrix.tag }}" == "latest-dev" ]]; then
+          elif [[ "${{ matrix.image_name }}" == "wolfi-dx-toolbox" ]]; then
             echo "SOURCE_IMAGE_NAME=sdk" >> $GITHUB_ENV
           fi
 
-      - name: Verify base container
+      - name: Verify base image
         uses: EyeCantCU/cosign-action/verify@v0.2.2
         with:
           containers: ${{ env.SOURCE_IMAGE_NAME }}
@@ -54,7 +53,7 @@ jobs:
         id: meta
         with:
           images: |
-            ${{ env.IMAGE_NAME }}
+            ${{ matrix.image_name }}
           labels: |
             io.artifacthub.package.readme-url=https://raw.githubusercontent.com/ublue-os/boxkit/main/README.md
 
@@ -65,8 +64,8 @@ jobs:
         with:
           containerfiles: |
             ./toolboxes/wolfi-toolbox/Containerfile.wolfi
-          image: ${{ env.IMAGE_NAME }}
-          tags: ${{ matrix.tag }}
+          image: ${{ matrix.image_name }}
+          tags: ${{ env.IMAGE_TAGS }}
           build-args: |
             SOURCE_IMAGE_NAME: ${{ env.SOURCE_IMAGE_NAME }}
             SOURCE_IMAGE_REGISTRY: ${{ env.SOURCE_IMAGE_REGISTRY }}
@@ -113,7 +112,7 @@ jobs:
         run: |
           echo "${{ env.COSIGN_PRIVATE_KEY }}" > cosign.key
           wc -c cosign.key
-          cosign sign -y --key cosign.key ${{ steps.registry_case.outputs.lowercase }}/${{ env.IMAGE_NAME }}@${TAGS}
+          cosign sign -y --key cosign.key ${{ steps.registry_case.outputs.lowercase }}/${{ matrix.image_name }}@${TAGS}
         env:
           TAGS: ${{ steps.push.outputs.digest }}
           COSIGN_EXPERIMENTAL: false
