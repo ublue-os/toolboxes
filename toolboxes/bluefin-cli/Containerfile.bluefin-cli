@@ -19,5 +19,10 @@ RUN apk update && \
     mv /home/linuxbrew /home/homebrew && \
     rm /toolbox-packages
 
+# Patch /usr/bin/entrypoint
+RUN sed -i '349,489 s/^/#/' /usr/bin/entrypoint && \
+    sed -i '499,1355 s/^/#/' /usr/bin/entrypoint && \
+    sed -i '1357 s/^/#/' /usr/bin/entrypoint
+
 # Change root shell to BASH
 RUN sed -i -e '/^root/s/\/bin\/ash/\/bin\/bash/' /etc/passwd
