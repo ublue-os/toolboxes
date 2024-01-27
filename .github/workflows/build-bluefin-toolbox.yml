@@ -24,7 +24,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        image_name: ["bluefin-cli", "bluefin-cli-dx"]
+        image_name: ["bluefin-cli", "bluefin-dx-cli"]
     steps:
       # Checkout push-to-registry action GitHub repository
       - name: Checkout Push to Registry action
