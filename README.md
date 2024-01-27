@@ -48,7 +48,7 @@ The [WolfiOS](https://edu.chainguard.dev/open-source/wolfi/overview/) apk packag
 
 The intended endstate of `bluefin-cli` is a fully automated declarative config managed via git using Wolfi packages for clean rebuilds daily. `brew` is used to fill out the "long tail" of existing software.
 
-Both `bluefin-cli` and `wolfi-toolbox` have Wolfi developer variants built from the Wolfi SDK image, intended for Wolfi package and image development. They include utilities such as melange, wolfictl, and apko. These are pushed to the `latest-dev` tag.
+Both `bluefin-cli` and `wolfi-toolbox` have Wolfi developer variants built from the Wolfi SDK image, intended for Wolfi package and image development. They include utilities such as melange, wolfictl, and apko. These are pushed to the `testing` tag.
 
 # Stats
 
