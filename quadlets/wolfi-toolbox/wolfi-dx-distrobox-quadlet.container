@@ -1,0 +1,40 @@
+[Unit]
+Description=Wolfi DX Toolbox for Wolfi development
+
+[Container]
+Annotation=run.oci.keep_original_groups=1
+AutoUpdate=registry
+ContainerName=wolfi-quadlet
+Environment=SHELL=%s
+Environment=HOME=%h
+Environment=XDG_RUNTIME_DIR=%t
+Environment=USER=%u
+Environment=USERNAME=%u
+Environment=container=podman
+Exec=--verbose --name %u  --user %U --group %G --home %h --init "0" --nvidia "1" --pre-init-hooks " " --additional-packages " " -- " "
+Image=ghcr.io/ublue-os/wolfi-dx-toolbox:latest
+HostName=wolfi-quadlet.%l
+Network=host
+PodmanArgs=--entrypoint /usr/bin/entrypoint
+PodmanArgs=--ipc host
+PodmanArgs=--no-hosts
+PodmanArgs=--privileged
+PodmanArgs=--label manager=distrobox
+PodmanArgs=--security-opt label=disable
+PodmanArgs=--security-opt apparmor=unconfined
+Ulimit=host
+User=root:root
+UserNS=keep-id
+Volume=/:/run/host:rslave
+Volume=/tmp:/tmp:rslave
+Volume=%h:%h:rslave
+Volume=/dev:/dev:rslave
+Volume=/sys:/sys:rslave
+Volume=/dev/pts
+Volume=/dev/null:/dev/ptmx
+Volume=/sys/fs/selinux
+Volume=/var/log/journal
+Volume=/var/home/%u:/var/home/%u:rslave
+Volume=%t:%t:rslave
+Volume=/etc/hosts:/etc/hosts:ro
+Volume=/etc/resolv.conf:/etc/resolv.conf:ro
