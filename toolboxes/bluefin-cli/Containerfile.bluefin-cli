@@ -24,5 +24,8 @@ RUN sed -i '349,489 s/^/#/' /usr/bin/entrypoint && \
     sed -i '499,1355 s/^/#/' /usr/bin/entrypoint && \
     sed -i '1357 s/^/#/' /usr/bin/entrypoint
 
-# Change root shell to BASH
-RUN sed -i -e '/^root/s/\/bin\/ash/\/bin\/bash/' /etc/passwd
+# Use and configure bash, retrieve ble.sh
+RUN wget -q $(curl -s https://api.github.com/repos/akinomyoga/ble.sh/releases/latest | grep "browser_download_url" | cut -d '"' -f 4) -O /tmp/ble.tar.xz && \
+    mkdir -p /usr/share/blesh && \
+    tar xJf /tmp/ble.tar.xz -C /usr/share/blesh --strip-components=1 && \
+    sed -i -e '/^root/s/\/bin\/ash/\/bin\/bash/' /etc/passwd

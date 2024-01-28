@@ -48,6 +48,10 @@ if [ -z "$BASHRCSOURCED" ]; then
   STARSHIP_CONFIG=/etc/starship.toml
   export STARSHIP_CONFIG
   eval "$(starship init $SHELL)"
+
+  # Enable atuin and ble.sh
+  source /usr/share/blesh/ble.sh
+  eval "$(atuin init $SHELL)"
 fi
 
 
