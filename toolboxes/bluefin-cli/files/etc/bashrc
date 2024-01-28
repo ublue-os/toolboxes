@@ -50,7 +50,7 @@ if [ -z "$BASHRCSOURCED" ]; then
   eval "$(starship init $SHELL)"
 
   # Enable atuin and ble.sh
-  source /usr/share/blesh/ble.sh
+  source /usr/share/bash-prexec
   eval "$(atuin init bash)"
 fi
 
