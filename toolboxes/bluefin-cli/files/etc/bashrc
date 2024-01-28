@@ -51,7 +51,7 @@ if [ -z "$BASHRCSOURCED" ]; then
 
   # Enable atuin and ble.sh
   source /usr/share/blesh/ble.sh
-  eval "$(atuin init $SHELL)"
+  eval "$(atuin init bash)"
 fi
 
 
