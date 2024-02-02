@@ -20,9 +20,9 @@ RUN apk update && \
     rm /toolbox-packages
 
 # Patch /usr/bin/entrypoint
-RUN sed -i '349,489 s/^/#/' /usr/bin/entrypoint && \
-    sed -i '499,1355 s/^/#/' /usr/bin/entrypoint && \
-    sed -i '1357 s/^/#/' /usr/bin/entrypoint
+RUN sed -i '/missing_packages=0/,/# Workaround for when sudo is missing,/ s/^/#/' /usr/bin/entrypoint && \
+    sed -i '/elif command -v apt-get/,/# Set SHELL to the install path inside the container/ s/^/#/' /usr/bin/entrypoint && \
+    sed -i '/# Set SHELL to the install path inside the container/a touch /.containersetupdone' /usr/bin/entrypoint
 
 # Use and configure bash, retrieve bash-prexec
 RUN curl https://raw.githubusercontent.com/rcaloras/bash-preexec/master/bash-preexec.sh -o /tmp/bash-prexec && \
