@@ -2,6 +2,8 @@ if test "$(id -u)" -gt "0"; then
   green=$'\033[32m'
   bold=$'\033[1m'
   normal=$'\033[0m'
+  HOMEBREW_REPOSITORY=/home/linuxbrew/.linuxbrew
+  export HOMEBREW_REPOSITORY
   if test ! -f /etc/linuxbrew.firstrun; then
     printf "\nBluefin-CLI First Run Setup\n\n"
     printf "Setting up sudo for ${bold}${USER}${normal}...\t\t\t "
