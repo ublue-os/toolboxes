@@ -49,11 +49,13 @@ if [ -z "$BASHRCSOURCED" ]; then
   export STARSHIP_CONFIG
   eval "$(starship init $SHELL)"
 
-  # Enable atuin and ble.sh
+  # Enable atuin and bash-prexec
   source /usr/share/bash-prexec
   eval "$(atuin init bash)"
-fi
 
+  # Enable zoxide
+  eval "$(zoxide init bash --cmd cd)"
+fi
 
 # vim:ts=4:sw=4
 

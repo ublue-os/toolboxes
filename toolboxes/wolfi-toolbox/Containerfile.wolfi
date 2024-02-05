@@ -41,3 +41,10 @@ RUN mkdir -p /usr/local/bin  && \
 
 # Change root shell to BASH
 RUN sed -i -e '/^root/s/\/bin\/ash/\/bin\/bash/' /etc/passwd
+
+# Setup su-exec and fake sudo
+RUN [ -e /sbin/su-exec ] && \
+    chmod u+s /sbin/su-exec && \
+    [ ! -e /usr/bin/sudo ] && \
+    printf "%s\n%s" '#!/bin/sh' '/sbin/su-exec root "$@"' > /usr/bin/sudo && \
+    chmod +x /usr/bin/sudo
