@@ -2,6 +2,10 @@ atuin
 brew
 gawk
 eza
+fd
+fzf
+ripgrep
 sed
 starship
 sudo-rs
+zoxide
