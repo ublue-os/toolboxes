@@ -15,7 +15,7 @@ if [ "x${BASH_VERSION-}" != x -a "x${PS1-}" != x -a "x${BASH_COMPLETION_VERSINFO
             # Source completion code.
             . /usr/local/share/bash-completion/bash_completion
         fi
-        if ! test -L /home/linuxbrew/.linuxbrew/etc/bash_completion.d/brew; then
+        if ! test -L /home/linuxbrew/.linuxbrew/etc/bash_completion.d/brew && test "$(id -u)" -gt 0; then
             /home/linuxbrew/.linuxbrew/bin/brew completions link
         fi
         if test -d /home/linuxbrew/.linuxbrew/etc/bash_completion.d; then
