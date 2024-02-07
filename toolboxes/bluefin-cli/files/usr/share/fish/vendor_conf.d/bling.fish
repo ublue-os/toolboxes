@@ -1,4 +1,10 @@
-# shellcheck shell=sh
+if status is-interactive
+    set -gx STARSHIP_CONFIG /etc/starship.toml
+    eval "$(starship init fish)"
+    eval "$(atuin init fish)"
+    eval "$(zoxide init fish --cmd cd)"
+end
+
 # Eza for ls
 alias ll='eza -l --icons=auto --group-directories-first' 2>/dev/null
 alias l.='eza -d .*' 2>/dev/null
@@ -17,4 +23,4 @@ alias xzfgrep='rg -z -F' 2>/dev/null
 alias cd='cd' 2>/dev/null
 
 # Fd for find
-alias find='fd' 2>/dev/null
+alias find='fd' 2>/dev/null 
