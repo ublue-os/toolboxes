@@ -3,6 +3,7 @@ brew
 gawk
 eza
 fd
+fish
 fzf
 ripgrep
 sed
