@@ -3,10 +3,6 @@ if test "$(id -u)" -gt "0"; then
   blue=$(printf '\033[38;5;32m')
   bold=$(printf '\033[1m')
   normal=$(printf '\033[0m')
-  HOMEBREW_REPOSITORY=/home/linuxbrew/.linuxbrew
-  export HOMEBREW_REPOSITORY
-  HOMEBREW_NO_AUTO_UPDATE=0
-  export HOMEBREW_NO_AUTO_UPDATE
   if test ! -f /etc/linuxbrew.firstrun; then
     printf "\nBluefin-CLI First Run Setup\n\n"
     printf "Setting up sudo for %s%s%s%s...\t\t\t " "$bold" "$blue" "$USER" "$normal"
