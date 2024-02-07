@@ -1,3 +1,4 @@
+# shellcheck shell=bash disable=SC1091
 # /etc/bashrc
 
 # System wide functions and aliases
@@ -47,7 +48,11 @@ if [ -z "$BASHRCSOURCED" ]; then
   fi
   STARSHIP_CONFIG=/etc/starship.toml
   export STARSHIP_CONFIG
-  eval "$(starship init $SHELL)"
+  eval "$(starship init bash)"
+
+  # Enable fzf keybindings
+  [ -r /run/host/usr/share/fzf/shell/key-bindings.bash ] && \
+  . /run/host/usr/share/fzf/shell/key-bindings.bash
 
   # Enable atuin and bash-prexec
   source /usr/share/bash-prexec
