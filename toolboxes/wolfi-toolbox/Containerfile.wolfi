@@ -12,8 +12,9 @@ LABEL com.github.containers.toolbox="true" \
 
 COPY ./toolboxes/wolfi-toolbox/packages.wolfi /toolbox-packages
 
-# Update image
-RUN apk update && \
+# Remove local repository and update image
+RUN sed -i 's/@local.*//g' /etc/apk/repositories \
+    apk update && \
     apk upgrade
 
 # Add optional packages
