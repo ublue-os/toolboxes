@@ -67,8 +67,8 @@ jobs:
           image: ${{ matrix.image_name }}
           tags: ${{ env.IMAGE_TAGS }}
           build-args: |
-            SOURCE_IMAGE_NAME: ${{ env.SOURCE_IMAGE_NAME }}
-            SOURCE_IMAGE_REGISTRY: ${{ env.SOURCE_IMAGE_REGISTRY }}
+            SOURCE_IMAGE_NAME=${{ env.SOURCE_IMAGE_NAME }}
+            SOURCE_IMAGE_REGISTRY=${{ env.SOURCE_IMAGE_REGISTRY }}
           labels: ${{ steps.meta.outputs.labels }}
           oci: false
 
