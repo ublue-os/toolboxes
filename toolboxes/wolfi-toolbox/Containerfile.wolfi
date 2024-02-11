@@ -44,8 +44,9 @@ RUN if [[ "${IMAGE_NAME}" =~ "dx" ]]; then \
         (cd wolfictl && make wolfictl install) && \
         # yam
         git clone https://github.com/chainguard-dev/yam.git && \
-        cd yam && \
-        go build -v -o "/usr/bin/yam" . \
+        (cd yam && go build -v -o "/usr/bin/yam") && \
+        cd / && \
+        rm -rf /tmp/* \
     ; fi
 
 # Get Distrobox-host-exec and host-spawn
@@ -73,4 +74,5 @@ RUN [ -e /sbin/su-exec ] && \
     chmod u+s /sbin/su-exec && \
     [ ! -e /usr/bin/sudo ] && \
     printf "%s\n%s" '#!/bin/sh' '/sbin/su-exec root "$@"' > /usr/bin/sudo && \
-    chmod +x /usr/bin/sudo
+    chmod +x /usr/bin/sudo && \
+    rm -rf /tmp/*
