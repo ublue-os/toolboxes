@@ -17,7 +17,7 @@ isl
 libbrotlicommon1
 libbrotlidec1
 libcrypto3
-libcurl4
+libcurl-openssl4
 libgcc
 libnghttp2-14
 libpcre2-32-0
