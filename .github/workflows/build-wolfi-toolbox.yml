@@ -8,7 +8,6 @@ on:
 env:
     IMAGE_TAGS: latest
     IMAGE_REGISTRY: ghcr.io/${{ github.repository_owner }}
-    SOURCE_IMAGE_REGISTRY: cgr.dev/chainguard
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
@@ -31,18 +30,10 @@ jobs:
       - name: Checkout Push to Registry action
         uses: actions/checkout@v4
 
-      - name: Determine base image
-        run: |
-          if [[ "${{ matrix.image_name }}" == "wolfi-toolbox" ]]; then
-            echo "SOURCE_IMAGE_NAME=wolfi-base" >> $GITHUB_ENV
-          elif [[ "${{ matrix.image_name }}" == "wolfi-dx-toolbox" ]]; then
-            echo "SOURCE_IMAGE_NAME=sdk" >> $GITHUB_ENV
-          fi
-
       - name: Verify base image
         uses: EyeCantCU/cosign-action/verify@v0.2.2
         with:
-          containers: ${{ env.SOURCE_IMAGE_NAME }}
+          containers: wolfi-base
           cert-identity: https://github.com/chainguard-images/images/.github/workflows/release.yaml@refs/heads/main
           oidc-issuer: https://token.actions.githubusercontent.com
           registry: cgr.dev/chainguard
@@ -67,8 +58,7 @@ jobs:
           image: ${{ matrix.image_name }}
           tags: ${{ env.IMAGE_TAGS }}
           build-args: |
-            SOURCE_IMAGE_NAME: ${{ env.SOURCE_IMAGE_NAME }}
-            SOURCE_IMAGE_REGISTRY: ${{ env.SOURCE_IMAGE_REGISTRY }}
+            IMAGE_NAME=${{ matrix.image_name }}
           labels: ${{ steps.meta.outputs.labels }}
           oci: false
 
