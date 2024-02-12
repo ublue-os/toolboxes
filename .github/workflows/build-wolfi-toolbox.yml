@@ -65,6 +65,7 @@ jobs:
       - uses: distroless/actions/apko-build@main
         id: apko
         with:
+          archs: aarch64,x86_64
           config: ./toolboxes/wolfi-toolbox/${{ matrix.image_name }}.yaml
           tag: ${{ steps.registry_case.outputs.lowercase }}/${{ matrix.image_name }}:latest
 
