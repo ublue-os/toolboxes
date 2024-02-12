@@ -22,6 +22,33 @@ RUN grep -v '^#' /tmp/packages.wolfi | xargs apk add && \
         grep -v '^#' /tmp/packages.wolfi-dx | xargs apk add \
     ; fi
 
+# DX: Include utilities available in the melange SDK
+RUN if [[ "${IMAGE_NAME}" =~ "dx" ]]; then \
+        cd /tmp && \
+        export PATH="/tmp/go/bin:${PATH}" && \
+        # go setup
+        export GOPATH="/tmp/go" && \
+        mkdir -p "${GOPATH}" && \
+        # goimports
+        go install golang.org/x/tools/cmd/goimports@latest && \
+        mkdir -p "/usr/bin" && \
+        mv "${GOPATH}/bin/goimports" "/usr/bin" && \
+        # melange
+        git clone https://github.com/chainguard-dev/melange.git && \
+        (cd melange && make melange install) && \
+        # apko
+        git clone https://github.com/chainguard-dev/apko.git && \
+        (cd apko && make apko install) && \
+        # wolfictl
+        git clone https://github.com/wolfi-dev/wolfictl.git && \
+        (cd wolfictl && make wolfictl install) && \
+        # yam
+        git clone https://github.com/chainguard-dev/yam.git && \
+        (cd yam && go build -v -o "/usr/bin/yam") && \
+        cd / && \
+        rm -rf /tmp/* \
+    ; fi
+
 # Get Distrobox-host-exec and host-spawn
 RUN git clone https://github.com/89luca89/distrobox.git --single-branch /tmp/distrobox && \
     cp /tmp/distrobox/distrobox-host-exec /usr/bin/distrobox-host-exec && \
@@ -47,4 +74,5 @@ RUN [ -e /sbin/su-exec ] && \
     chmod u+s /sbin/su-exec && \
     [ ! -e /usr/bin/sudo ] && \
     printf "%s\n%s" '#!/bin/sh' '/sbin/su-exec root "$@"' > /usr/bin/sudo && \
-    chmod +x /usr/bin/sudo
+    chmod +x /usr/bin/sudo && \
+    rm -rf /tmp/*
