@@ -59,7 +59,7 @@ jobs:
         with:
           archs: aarch64,x86_64
           config: ./toolboxes/wolfi-toolbox/${{ matrix.image_name }}.yaml
-          tag: ${{ steps.registry_case.outputs.lowercase }}/${{ matrix.image_name }}:latest
+          tag: ${{ steps.registry_case.outputs.lowercase }}/${{ matrix.image_name }}:${{ env.IMAGE_TAGS }}
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
@@ -78,11 +78,11 @@ jobs:
         run: |
           echo "${{ env.COSIGN_PRIVATE_KEY }}" > cosign.key
           wc -c cosign.key
-          cosign sign -y --key cosign.key ${{ steps.registry_case.outputs.lowercase }}/${{ matrix.image_name }}:${TAGS}
+          cosign sign -y --key cosign.key ${{ steps.registry_case.outputs.lowercase }}/${{ matrix.image_name }}@${TAGS}
         env:
-          TAGS: latest
           COSIGN_EXPERIMENTAL: false
           COSIGN_PRIVATE_KEY: ${{ secrets.SIGNING_SECRET }}
+          TAGS: ${{ steps.apko.outputs.digest }}
 
       - name: Echo outputs
         run: |
