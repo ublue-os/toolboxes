@@ -1,4 +1,4 @@
-include: ./toolboxes/wolfi-toolbox/wolfi-toolbox.yaml
+include: ./toolboxes/wolfi-toolbox/base.apko.yaml
 
 contents:
   repositories:

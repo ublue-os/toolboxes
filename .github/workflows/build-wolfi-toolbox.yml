@@ -24,7 +24,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        image_name: ["wolfi-toolbox", "wolfi-dx-toolbox"]
+        image_variant: ["base", "sdk"]
     steps:
       # Checkout push-to-registry action GitHub repository
       - name: Checkout Push to Registry action
@@ -36,7 +36,7 @@ jobs:
         id: meta
         with:
           images: |
-            ${{ matrix.image_name }}
+            wolfi-${{ matrix.image_variant }}
           labels: |
             io.artifacthub.package.readme-url=https://raw.githubusercontent.com/ublue-os/boxkit/main/README.md
 
@@ -53,8 +53,8 @@ jobs:
         id: apko
         with:
           archs: aarch64,x86_64
-          config: ./toolboxes/wolfi-toolbox/${{ matrix.image_name }}.yaml
-          tag: ${{ steps.registry_case.outputs.lowercase }}/${{ matrix.image_name }}:${{ env.IMAGE_TAGS }}
+          config: ./toolboxes/wolfi-toolbox/${{ matrix.image_variant }}.apko.yaml
+          tag: ${{ steps.registry_case.outputs.lowercase }}/wolfi-${{ matrix.image_variant }}:${{ env.IMAGE_TAGS }}
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
@@ -73,11 +73,10 @@ jobs:
         run: |
           echo "${{ env.COSIGN_PRIVATE_KEY }}" > cosign.key
           wc -c cosign.key
-          cosign sign -y --key cosign.key ${{ steps.registry_case.outputs.lowercase }}/${{ matrix.image_name }}@${TAGS}
+          cosign sign -y --key cosign.key ${{ steps.apko.outputs.digest }}
         env:
           COSIGN_EXPERIMENTAL: false
           COSIGN_PRIVATE_KEY: ${{ secrets.SIGNING_SECRET }}
-          TAGS: ${{ steps.apko.outputs.digest }}
 
       - name: Echo outputs
         run: |
