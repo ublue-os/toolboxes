@@ -54,7 +54,7 @@ jobs:
         if: matrix.image_name == 'wolfi-dx-toolbox'
 
       # Build and publish image with apko
-      - uses: distroless/actions/apko-build@main
+      - uses: distroless/actions/apko-publish@main
         id: apko
         with:
           archs: aarch64,x86_64
@@ -78,7 +78,7 @@ jobs:
         run: |
           echo "${{ env.COSIGN_PRIVATE_KEY }}" > cosign.key
           wc -c cosign.key
-          cosign sign -y --key cosign.key ${{ steps.registry_case.outputs.lowercase }}/${{ matrix.image_name }}@${TAGS}
+          cosign sign -y --key cosign.key ${{ steps.registry_case.outputs.lowercase }}/${{ matrix.image_name }}:${TAGS}
         env:
           TAGS: latest
           COSIGN_EXPERIMENTAL: false
