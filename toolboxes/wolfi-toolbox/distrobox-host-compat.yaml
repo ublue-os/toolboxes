@@ -1,0 +1,43 @@
+package:
+  name: distrobox-host-compat
+  version: 1.6.0.1
+  epoch: 0
+  description: "Distrobox-host-exec/spawn support"
+  copyright:
+    - license: GPL-3.0-only
+  dependencies:
+    runtime:
+      - busybox
+
+environment:
+  contents:
+    packages:
+      - busybox
+      - git
+      - wget
+
+pipeline:
+  - name: Install
+    runs: |
+      mkdir -p "${{targets.destdir}}"/usr/bin
+      mkdir -p "${{targets.destdir}}"/usr/local/bin
+
+      # Get Distrobox-host-exec and host-spawn
+      git clone https://github.com/89luca89/distrobox.git --single-branch distrobox
+      cp distrobox/distrobox-host-exec "${{ targets.destdir }}"/usr/bin/distrobox-host-exec
+      cp distrobox/distrobox-export "${{ targets.destdir }}"/usr/bin/distrobox-export
+      cp distrobox/distrobox-init "${{ targets.destdir }}"/usr/bin/entrypoint
+      wget https://github.com/1player/host-spawn/releases/download/$(cat distrobox/distrobox-host-exec | grep host_spawn_version= | cut -d "\"" -f 2)/host-spawn-$(uname -m) -O "${{ targets.destdir }}"/usr/bin/host-spawn
+      chmod +x "${{ targets.destdir }}"/usr/bin/host-spawn
+
+      # Make some symlinks
+      ln -fs "${{ targets.destdir }}"/usr/bin/distrobox-host-exec "${{ targets.destdir }}"/usr/local/bin/docker
+      ln -fs "${{ targets.destdir }}"/usr/bin/distrobox-host-exec "${{ targets.destdir }}"/usr/local/bin/flatpak
+      ln -fs "${{ targets.destdir }}"/usr/bin/distrobox-host-exec "${{ targets.destdir }}"/usr/local/bin/podman
+      ln -fs "${{ targets.destdir }}"/usr/bin/distrobox-host-exec "${{ targets.destdir }}"/usr/local/bin/rpm-ostree
+
+update:
+  enabled: true
+  github:
+    identifier: 89luca89/distrobox
+    use-tag: true
