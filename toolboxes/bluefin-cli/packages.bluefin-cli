@@ -9,4 +9,5 @@ ripgrep
 sed
 starship
 sudo-rs
+uutils
 zoxide
