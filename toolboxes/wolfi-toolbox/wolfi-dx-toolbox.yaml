@@ -1,4 +1,4 @@
-include: ./wolfi-toolbox.yaml
+include: ./toolboxes/wolfi-toolbox/wolfi-toolbox.yaml
 
 contents:
   repositories:
