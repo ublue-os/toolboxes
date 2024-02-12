@@ -1,0 +1,55 @@
+contents:
+  repositories:
+    - https://packages.wolfi.dev/os
+  keyring:
+    - https://packages.wolfi.dev/os/wolfi-signing.rsa.pub
+  packages:
+    - bash
+    - bzip2
+    - coreutils
+    - curl
+    - diffutils
+    - findmnt
+    - findutils
+    - git
+    - gnupg
+    - gpg
+    - iproute2
+    - iputils
+    - keyutils
+    - libcap
+    - libsm
+    - libx11
+    - libxau
+    - libxcb
+    - libxdmcp
+    - libxext
+    - libice
+    - libxmu
+    - libxt
+    - mount
+    - ncurses
+    - ncurses-terminfo
+    - net-tools
+    - openssh-client
+    - pigz
+    - posix-libc-utils
+    - procps
+    - rsync
+    - su-exec
+    - tcpdump
+    - tree
+    - tzdata
+    - umount
+    - unzip
+    - util-linux
+    - util-linux-misc
+    - vulkan-loader
+    - wget
+    - wolfi-base
+    - xauth
+    - xz
+    - zip
+
+entrypoint:
+  command: /bin/bash
