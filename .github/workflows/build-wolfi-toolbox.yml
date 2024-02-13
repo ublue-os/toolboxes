@@ -32,9 +32,9 @@ jobs:
 
       - name: Generate package list
         run: |
-          APK_LIST=("distrobox-host-compat.yaml")
+          APK_LIST="distrobox-host-compat.yaml"
           if [[ "${{ matrix.image_variant }}" == "sdk" ]]; then
-            APK_LIST+=("sdk.melange.yaml")
+            APK_LIST+=",sdk.melange.yaml"
           fi
           echo "APK_LIST=$APK_LIST" >> $GITHUB_ENV
 
