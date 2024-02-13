@@ -97,8 +97,22 @@ jobs:
         with:
           string: ${{ env.IMAGE_REGISTRY }}
 
+      # Build image with apko
+      - name: 'Build image'
+        uses: distroless/actions/apko-build@main
+        if: github.event_name == 'pull_request'
+        id: apko-build
+        with:
+          archs: aarch64,x86_64
+          config: toolboxes/wolfi-toolbox/${{ matrix.image_variant }}.apko.yaml
+          keyring-append: ./melange.rsa.pub
+          repository-append: ./packages
+          tag: ${{ steps.registry_case.outputs.lowercase }}/wolfi-${{ matrix.image_variant }}:${{ env.IMAGE_TAGS }}
+
       # Build and publish image with apko
-      - uses: distroless/actions/apko-publish@main
+      - name: 'Build and publish image'
+        uses: distroless/actions/apko-publish@main
+        if: github.event_name != 'pull_request'
         id: apko
         with:
           archs: aarch64,x86_64
