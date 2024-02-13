@@ -65,11 +65,8 @@ pipeline:
       git clone https://github.com/wolfi-dev/wolfictl.git
       (cd wolfictl && make wolfictl install)
 
-      #yam
+      # yam
       git clone https://github.com/chainguard-dev/yam.git
       cd yam
       go build -v -o  "${DESTDIR}/usr/bin/yam" .
       cd ..
-
-      # sdk entrypoint
-      cp mount/entrypoint.sh "${DESTDIR}/usr/bin/sdk"
