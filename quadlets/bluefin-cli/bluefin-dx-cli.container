@@ -11,7 +11,7 @@ Environment=XDG_RUNTIME_DIR=%t
 Environment=USER=%u
 Environment=USERNAME=%u
 Environment=container=podman
-Exec=--verbose --name %u  --user %U --group %G --home %h --init "0" --nvidia "1" --pre-init-hooks " " --additional-packages " " -- " "
+Exec=--verbose --name %u --user %U --group %G --home %h --init "0" --nvidia "1" --pre-init-hooks " " --additional-packages " " -- " "
 Image=ghcr.io/ublue-os/bluefin-dx-cli:latest
 HostName=bluefin-dx.%l
 Network=host
