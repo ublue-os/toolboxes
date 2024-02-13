@@ -40,7 +40,7 @@ jobs:
           empty-workspace: false
           multi-config: sdk.melange.yaml
           sign-with-temporary-key: true
-          workdir: toolboxes/wolfi-toolbox
+          workdir: ./toolboxes/wolfi-toolbox
 
       # Build metadata
       - name: Image Metadata
@@ -66,8 +66,8 @@ jobs:
         with:
           archs: ${{ matrix.archs }}
           config: toolboxes/wolfi-toolbox/${{ matrix.image_variant }}.apko.yaml
-          keyring-append: toolboxes/wolfi-toolbox/melange.rsa.pub
-          repository-append: toolboxes/wolfi-toolbox/packages
+          keyring-append: ./melange.rsa.pub
+          repository-append: ./packages
           tag: ${{ steps.registry_case.outputs.lowercase }}/wolfi-${{ matrix.image_variant }}:${{ env.IMAGE_TAGS }}
 
       - name: Login to GitHub Container Registry
