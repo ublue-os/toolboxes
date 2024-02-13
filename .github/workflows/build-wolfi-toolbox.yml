@@ -24,11 +24,23 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        archs: ["aarch64", "x86_64"]
         image_variant: ["base", "sdk"]
     steps:
       # Checkout push-to-registry action GitHub repository
       - name: Checkout Push to Registry action
         uses: actions/checkout@v4
+
+      # Build APKs with melange
+      - name: Build APKs
+        id: melange
+        uses: chainguard-dev/actions/melange-build@main
+        with:
+          archs: ${{ matrix.archs }}
+          empty-workspace: false
+          multi-config: sdk.melange.yaml
+          sign-with-temporary-key: true
+          workdir: toolboxes/wolfi-toolbox
 
       # Build metadata
       - name: Image Metadata
@@ -52,8 +64,10 @@ jobs:
       - uses: distroless/actions/apko-publish@main
         id: apko
         with:
-          archs: aarch64,x86_64
-          config: ./toolboxes/wolfi-toolbox/${{ matrix.image_variant }}.apko.yaml
+          archs: ${{ matrix.archs }}
+          config: toolboxes/wolfi-toolbox/${{ matrix.image_variant }}.apko.yaml
+          keyring-append: toolboxes/wolfi-toolbox/melange.rsa.pub
+          repository-append: toolboxes/wolfi-toolbox/packages
           tag: ${{ steps.registry_case.outputs.lowercase }}/wolfi-${{ matrix.image_variant }}:${{ env.IMAGE_TAGS }}
 
       - name: Login to GitHub Container Registry
