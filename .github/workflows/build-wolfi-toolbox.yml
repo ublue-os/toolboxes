@@ -24,7 +24,6 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        archs: ["aarch64", "x86_64"]
         image_variant: ["base", "sdk"]
     steps:
       # Checkout push-to-registry action GitHub repository
@@ -44,7 +43,7 @@ jobs:
         id: melange
         uses: chainguard-dev/actions/melange-build@main
         with:
-          archs: ${{ matrix.archs }}
+          archs: aarch64,x86_64
           empty-workspace: false
           multi-config: ${{ env.APK_LIST }}
           sign-with-temporary-key: true
@@ -72,7 +71,7 @@ jobs:
       - uses: distroless/actions/apko-publish@main
         id: apko
         with:
-          archs: ${{ matrix.archs }}
+          archs: aarch64,x86_64
           config: toolboxes/wolfi-toolbox/${{ matrix.image_variant }}.apko.yaml
           keyring-append: ./melange.rsa.pub
           repository-append: ./packages
