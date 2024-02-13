@@ -46,17 +46,24 @@ jobs:
           sign-with-temporary-key: true
           workdir: ./toolboxes/wolfi-toolbox
 
+      # Retrieve run ID of release workflow for SDK
+      - name: 'Retrieve SDK release run ID'
+        if: matrix.image_variant == 'sdk'
+        run: |
+          RUN_ID=$(curl -L https://api.github.com/repos/wolfi-dev/tools/actions/workflows/release.yaml/runs | jq -r ".workflow_runs[0].id")
+          echo "SDK_RELEASE_RUN_ID=$RUN_ID" >> $GITHUB_ENV
+
       # Fetch SDK
       - name: 'Download SDK'
         if: matrix.image_variant == 'sdk'
         uses: actions/download-artifact@v4
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          pattern: sdk-*
           merge-multiple: true
           path: ./packages
+          pattern: sdk-*
           repository: wolfi-dev/tools
-          run-id: 7880359057
+          run-id: ${{ env.SDK_RELEASE_RUN_ID }}
 
       # Sign SDK with melange
       - name: Sign SDK
