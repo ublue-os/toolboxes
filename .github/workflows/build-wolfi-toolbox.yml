@@ -33,9 +33,6 @@ jobs:
       - name: Generate package list
         run: |
           APK_LIST="distrobox-host-compat.yaml"
-          if [[ "${{ matrix.image_variant }}" == "sdk" ]]; then
-            APK_LIST+=",sdk.melange.yaml"
-          fi
           echo "APK_LIST=$APK_LIST" >> $GITHUB_ENV
 
       # Build APKs with melange
@@ -48,6 +45,32 @@ jobs:
           multi-config: ${{ env.APK_LIST }}
           sign-with-temporary-key: true
           workdir: ./toolboxes/wolfi-toolbox
+
+      # Fetch SDK
+      - name: 'Download SDK'
+        if: matrix.image_variant == 'sdk'
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          pattern: sdk-*
+          merge-multiple: true
+          path: ./packages
+          repository: wolfi-dev/tools
+          run-id: 7880359057
+
+      # Sign SDK with melange
+      - name: Sign SDK
+        if: matrix.image_variant == 'sdk'
+        run: |
+          # Resigns all packages and rebuilds the package index
+          for arch in "x86_64" "aarch64"; do
+            # Not strictly needed, but might as well while we're here
+            melange sign -k melange.rsa packages/$arch/*.apk
+
+            # Rebuild the index
+            melange index -o packages/$arch/APKINDEX.tar.gz packages/$arch/*.apk
+            melange sign-index --signing-key melange.rsa packages/$arch/APKINDEX.tar.gz
+          done
 
       # Build metadata
       - name: Image Metadata
