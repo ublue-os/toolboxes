@@ -7,5 +7,6 @@ contents:
     - https://packages.wolfi.dev/os/wolfi-signing.rsa.pub
   packages:
     - ca-certificates-bundle
+    - grype
     - sdk
     - wolfi-baselayout
