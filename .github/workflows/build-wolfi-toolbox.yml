@@ -31,6 +31,14 @@ jobs:
       - name: Checkout Push to Registry action
         uses: actions/checkout@v4
 
+      - name: Generate package list
+        run: |
+          APK_LIST=("distrobox-host-compat.yaml")
+          if [[ "${{ matrix.image_variant }}" == "sdk" ]]; then
+            APK_LIST+=("sdk.melange.yaml")
+          fi
+          echo "APK_LIST=$APK_LIST" >> $GITHUB_ENV
+
       # Build APKs with melange
       - name: Build APKs
         id: melange
@@ -38,7 +46,7 @@ jobs:
         with:
           archs: ${{ matrix.archs }}
           empty-workspace: false
-          multi-config: sdk.melange.yaml
+          multi-config: ${{ env.APK_LIST }}
           sign-with-temporary-key: true
           workdir: ./toolboxes/wolfi-toolbox
 

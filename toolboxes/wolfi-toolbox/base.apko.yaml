@@ -9,6 +9,7 @@ contents:
     - coreutils
     - curl
     - diffutils
+    - distrobox-host-compat
     - findmnt
     - findutils
     - git
