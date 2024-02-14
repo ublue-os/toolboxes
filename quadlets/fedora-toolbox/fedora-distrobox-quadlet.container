@@ -7,19 +7,15 @@ AutoUpdate=registry
 ContainerName=fedora-distrobox-quadlet
 Environment=SHELL=%s
 Environment=HOME=%h
-Environment=XDG_RUNTIME_DIR=%t
-Environment=USER=%u
-Environment=USERNAME=%u
 Environment=container=podman
 Exec=--verbose --name %u --user %U --group %G --home %h --init "0" --nvidia "1" --pre-init-hooks " " --additional-packages " " -- " "
 Image=ghcr.io/ublue-os/fedora-toolbox:latest
 HostName=fedora-toolbox.%l
+Label=manager=distrobox
 Network=host
 PodmanArgs=--entrypoint /usr/bin/entrypoint
 PodmanArgs=--ipc host
-PodmanArgs=--label com.github.containers.toolbox=true
-PodmanArgs=--label manager=distrobox
-PodmanArgs=--no-hosts
+PodmanArgs=--pid host
 PodmanArgs=--privileged
 PodmanArgs=--security-opt label=disable
 PodmanArgs=--security-opt apparmor=unconfined

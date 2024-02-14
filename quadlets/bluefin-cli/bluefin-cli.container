@@ -7,19 +7,16 @@ AutoUpdate=registry
 ContainerName=bluefin
 Environment=SHELL=%s
 Environment=HOME=%h
-Environment=XDG_RUNTIME_DIR=%t
-Environment=USER=%u
-Environment=USERNAME=%u
 Environment=container=podman
 Exec=--verbose --name %u --user %U --group %G --home %h --init "0" --nvidia "1" --pre-init-hooks " " --additional-packages " " -- " "
 Image=ghcr.io/ublue-os/bluefin-cli:latest
 HostName=bluefin.%l
+Label=manager=distrobox
 Network=host
 PodmanArgs=--entrypoint /usr/bin/entrypoint
 PodmanArgs=--ipc host
-PodmanArgs=--no-hosts
+PodmanArgs=--pid host
 PodmanArgs=--privileged
-PodmanArgs=--label manager=distrobox
 PodmanArgs=--security-opt label=disable
 PodmanArgs=--security-opt apparmor=unconfined
 Ulimit=host
