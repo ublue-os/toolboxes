@@ -5,6 +5,7 @@ eza
 fd
 fish
 fzf
+rclone
 ripgrep
 sed
 starship
