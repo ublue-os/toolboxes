@@ -1,5 +1,5 @@
 [Unit]
-Description=Ubuntu Toolbox for your distrobox fun
+Description=Wolfi Toolbox for your distrobox fun
 
 [Service]
 Type=oneshot
