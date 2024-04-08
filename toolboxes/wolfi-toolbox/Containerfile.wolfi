@@ -10,7 +10,7 @@ ARG IMAGE_NAME="${IMAGE_NAME:-wolfi-toolbox}"
 
 COPY ./toolboxes/wolfi-toolbox/packages.wolfi \
      ./toolboxes/wolfi-toolbox/packages.wolfi-dx \
-     /tmp
+     /tmp/
 
 # Update image
 RUN apk update && \
