@@ -8,7 +8,7 @@ ContainerName=wolfi-quadlet
 Environment=SHELL=%s
 Environment=HOME=%h
 Environment=container=podman
-Exec=--verbose --name %u --user %U --group %G --home %h --init "0" --nvidia "1" --pre-init-hooks " " --additional-packages " " -- " "
+Exec=--verbose --name %u --user %U --group %G --home %h --init "0" --nvidia "1" -- " "
 Image=ghcr.io/ublue-os/wolfi-dx-toolbox:latest
 HostName=wolfi-quadlet.%l
 Label=manager=distrobox

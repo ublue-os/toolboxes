@@ -8,7 +8,7 @@ ContainerName=bluefin
 Environment=SHELL=%s
 Environment=HOME=%h
 Environment=container=podman
-Exec=--verbose --name %u --user %U --group %G --home %h --init "0" --nvidia "1" --pre-init-hooks " " --additional-packages " " -- " "
+Exec=--verbose --name %u --user %U --group %G --home %h --init "0" --nvidia "1" -- " "
 Image=ghcr.io/ublue-os/bluefin-dx-cli:latest
 HostName=bluefin-dx.%l
 Label=manager=distrobox
