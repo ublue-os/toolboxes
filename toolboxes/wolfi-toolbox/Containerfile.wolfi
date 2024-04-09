@@ -20,7 +20,10 @@ RUN apk update && \
 RUN grep -v '^#' /tmp/packages.wolfi | xargs apk add && \
     if [[ "${IMAGE_NAME}" =~ "dx" ]]; then \
         grep -v '^#' /tmp/packages.wolfi-dx | xargs apk add \
-    ; fi
+    ; fi && \
+    echo "#!/bin/sh" >> /usr/bin/pinentry && \
+    echo "exit 0" >> /usr/bin/pinentry && \
+    chmod +x /usr/bin/pinentry
 
 # DX: Include utilities available in the melange SDK
 RUN if [[ "${IMAGE_NAME}" =~ "dx" ]]; then \
