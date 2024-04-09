@@ -22,6 +22,7 @@ libice
 libxmu
 libxt
 linux-pam
+man-db
 mount
 ncurses
 ncurses-terminfo
