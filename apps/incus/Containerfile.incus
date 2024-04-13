@@ -1,0 +1,27 @@
+FROM ghcr.io/ublue-os/ubuntu-toolbox
+
+RUN apt-get update && \
+    apt-get install -y \
+        ca-certificates \
+        curl \
+        systemd && \
+    mkdir -p /etc/apt/keyrings/ && \
+    curl -fsSL https://pkgs.zabbly.com/key.asc -o /etc/apt/keyrings/zabbly.asc && \
+    echo "deb [signed-by=/etc/apt/keyrings/zabbly.asc] https://pkgs.zabbly.com/incus/stable $(. /etc/os-release && echo ${VERSION_CODENAME}) main" > /etc/apt/sources.list.d/zabbly-incus-stable.list && \
+    apt-get update && \
+    apt-get install -y \
+        btrfs-progs \
+        incus \
+        incus-ui-canonical \
+        iproute2 \
+        iptables \
+        kmod \
+        lvm2 \
+        virt-viewer && \
+    apt-get clean && \
+    mkdir -p /var/lib/lxcfs && \
+    groupmod -g 250 incus-admin && \
+    groupmod -g 251 incus && \
+    systemctl enable incus.socket
+
+CMD ["/sbin/init"]
