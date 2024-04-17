@@ -19,5 +19,5 @@ RUN go build -trimpath -o blincusui
 
 RUN cp /app/blincusui /usr/bin/blincusui
 RUN cp /app/blincusui.svg /usr/share/icons/hicolor/scalable/apps/blincusui.svg
-RUN cp /app/dev.brian.BlincusUI.desktop /usr/share/applications/blincusui.desktop
-RUN cp /app/dev.brian.BlincusUI.appdata.xml /usr/share/metainfo/blincusui.appdata.xml
+RUN cp /app/dev.blincus.BlincusUI.desktop /usr/share/applications/blincusui.desktop
+RUN cp /app/dev.blincus.BlincusUI.appdata.xml /usr/share/metainfo/blincusui.appdata.xml
