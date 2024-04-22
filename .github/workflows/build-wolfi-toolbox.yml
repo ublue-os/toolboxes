@@ -32,7 +32,6 @@ jobs:
 
       # Retrieve run IDs
       - name: 'Retrieve run IDs'
-        if: matrix.image_variant == 'sdk'
         run: |
           # Ublue packages run ID
           UBLUE_RUN_ID=$(curl -L https://api.github.com/repos/ublue-os/packages/actions/workflows/wolfi.yml/runs | jq -r ".workflow_runs[0].id")
@@ -65,9 +64,12 @@ jobs:
           repository: wolfi-dev/tools
           run-id: ${{ env.SDK_RUN_ID }}
 
+      # Setup melange
+      - name: Setup melange
+        uses: chainguard-dev/actions/setup-melange@main
+
       # Sign packages with melange
       - name: Sign packages
-        if: matrix.image_variant == 'sdk'
         run: |
           # Resigns all packages and rebuilds the package index
           for arch in "x86_64" "aarch64"; do
