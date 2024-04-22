@@ -30,22 +30,6 @@ jobs:
       - name: Checkout Push to Registry action
         uses: actions/checkout@v4
 
-      - name: Generate package list
-        run: |
-          APK_LIST="distrobox-host-compat.yaml"
-          echo "APK_LIST=$APK_LIST" >> $GITHUB_ENV
-
-      # Build APKs with melange
-      - name: Build APKs
-        id: melange
-        uses: chainguard-dev/actions/melange-build@main
-        with:
-          archs: aarch64,x86_64
-          empty-workspace: false
-          multi-config: ${{ env.APK_LIST }}
-          sign-with-temporary-key: true
-          workdir: ./toolboxes/wolfi-toolbox
-
       # Retrieve run ID of release workflow for SDK
       - name: 'Retrieve SDK release run ID'
         if: matrix.image_variant == 'sdk'
