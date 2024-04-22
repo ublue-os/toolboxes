@@ -71,6 +71,8 @@ jobs:
       # Sign packages with melange
       - name: Sign packages
         run: |
+          # Generate keys
+          melange keygen
           # Resigns all packages and rebuilds the package index
           for arch in "x86_64" "aarch64"; do
             # Not strictly needed, but might as well while we're here
