@@ -1,0 +1,12 @@
+include: ./toolboxes/bluefin-cli/bluefin.apko.yaml
+
+contents:
+  repositories:
+    - https://packages.wolfi.dev/os
+  keyring:
+    - https://packages.wolfi.dev/os/wolfi-signing.rsa.pub
+  packages:
+    - ca-certificates-bundle
+    - grype
+    - sdk
+    - wolfi-baselayout
