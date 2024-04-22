@@ -30,12 +30,28 @@ jobs:
       - name: Checkout Push to Registry action
         uses: actions/checkout@v4
 
-      # Retrieve run ID of release workflow for SDK
-      - name: 'Retrieve SDK release run ID'
+      # Retrieve run IDs
+      - name: 'Retrieve run IDs'
         if: matrix.image_variant == 'sdk'
         run: |
-          RUN_ID=$(curl -L https://api.github.com/repos/wolfi-dev/tools/actions/workflows/release.yaml/runs | jq -r ".workflow_runs[0].id")
-          echo "SDK_RELEASE_RUN_ID=$RUN_ID" >> $GITHUB_ENV
+          # Ublue packages run ID
+          UBLUE_RUN_ID=$(curl -L https://api.github.com/repos/ublue-os/packages/actions/workflows/wolfi.yml/runs | jq -r ".workflow_runs[0].id")
+          echo "UBLUE_RUN_ID=$UBLUE_RUN_ID" >> $GITHUB_ENV
+
+          # Wolfi tools run ID
+          SDK_RUN_ID=$(curl -L https://api.github.com/repos/wolfi-dev/tools/actions/workflows/release.yaml/runs | jq -r ".workflow_runs[0].id")
+          echo "SDK_RUN_ID=$SDK_RUN_ID" >> $GITHUB_ENV
+
+      # Fetch SDK
+      - name: 'Download Ublue packages'
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          merge-multiple: true
+          path: ./packages
+          pattern: wolfi-packages
+          repository: ublue-os/packages
+          run-id: ${{ env.UBLUE_RUN_ID }}
 
       # Fetch SDK
       - name: 'Download SDK'
@@ -47,10 +63,10 @@ jobs:
           path: ./packages
           pattern: sdk-*
           repository: wolfi-dev/tools
-          run-id: ${{ env.SDK_RELEASE_RUN_ID }}
+          run-id: ${{ env.SDK_RUN_ID }}
 
-      # Sign SDK with melange
-      - name: Sign SDK
+      # Sign packages with melange
+      - name: Sign packages
         if: matrix.image_variant == 'sdk'
         run: |
           # Resigns all packages and rebuilds the package index
