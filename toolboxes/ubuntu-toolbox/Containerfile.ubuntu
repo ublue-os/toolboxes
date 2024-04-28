@@ -1,24 +1,32 @@
-FROM quay.io/toolbx-images/ubuntu-toolbox:22.04
-# From https://github.com/toolbx-images/images/tree/main/ubuntu/22.04
+FROM docker.io/library/ubuntu:24.04
+# FROM https://hub.docker.com/_/ubuntu
 
 LABEL com.github.containers.toolbox="true" \
-      usage="This image is meant to be used with the toolbox or distrobox command" \
-      summary="A cloud-native terminal experience powered by Ubuntu" \
-      maintainer="jorge.castro@gmail.com"
+    name="ubuntu-toolbox" \
+    usage="This image is meant to be used with the toolbox or distrobox command" \
+    summary="A cloud-native terminal experience powered by Ubuntu" \
+    maintainer="jorge.castro@gmail.com"
 
 COPY ./toolboxes/ubuntu-toolbox/packages.ubuntu /toolbox-packages
 
-RUN apt-get update && \ 
-    apt-get upgrade -y && \
+RUN rm /etc/apt/apt.conf.d/docker-gzip-indexes /etc/apt/apt.conf.d/docker-no-languages && \
+    sed -Ei 's/^(hosts:.*)(\<files\>)\s*(.*)/\1\2 myhostname \3/' /etc/nsswitch.conf && \
+    sed -Ei '/apt-get (update|upgrade)/s/^/#/' /usr/local/sbin/unminimize && \
+    apt-get update && \
+    yes | /usr/local/sbin/unminimize && \
     DEBIAN_FRONTEND=noninteractive apt-get -y install \
-        $(cat toolbox-packages | xargs) && \
-    rm -rd /var/lib/apt/lists/*
-
-RUN rm /toolbox-packages
-
-RUN   ln -fs /usr/bin/distrobox-host-exec /usr/local/bin/docker && \
-      ln -fs /usr/bin/distrobox-host-exec /usr/local/bin/flatpak && \ 
-      ln -fs /usr/bin/distrobox-host-exec /usr/local/bin/podman && \
-      ln -fs /usr/bin/distrobox-host-exec /usr/local/bin/rpm-ostree
-
-RUN echo "ALL            ALL = (ALL) NOPASSWD: ALL" >> /etc/sudoers
+    ubuntu-minimal ubuntu-standard \
+    libnss-myhostname \
+    flatpak-xdg-utils \
+    $(cat toolbox-packages | xargs) && \
+    rm -rd /var/lib/apt/lists/* && \
+    rm /toolbox-packages && \
+    mkdir /usr/share/empty && \
+    userdel --remove ubuntu && \
+    rm /etc/apt/apt.conf.d/20apt-esm-hook.conf && \
+    ln -s /usr/libexec/flatpak-xdg-utils/flatpak-spawn /usr/bin/ && \
+    ln -fs /usr/bin/distrobox-host-exec /usr/local/bin/docker && \
+    ln -fs /usr/bin/distrobox-host-exec /usr/local/bin/flatpak && \ 
+    ln -fs /usr/bin/distrobox-host-exec /usr/local/bin/podman && \
+    ln -fs /usr/bin/distrobox-host-exec /usr/local/bin/rpm-ostree && \
+    echo "ALL ALL = (ALL) NOPASSWD: ALL" >> /etc/sudoers
