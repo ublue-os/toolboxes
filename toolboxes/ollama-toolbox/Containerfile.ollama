@@ -1,0 +1,29 @@
+# Use the customized bluefin-cli as the base image
+ARG SOURCE_IMAGE_NAME="${SOURCE_IMAGE_NAME:-wolfi-toolbox}"
+ARG SOURCE_IMAGE_REGISTRY="${SOURCE_IMAGE_REGISTRY:-ghcr.io/ublue-os}"
+ARG SOURCE_IMAGE="${SOURCE_IMAGE_REGISTRY}/${SOURCE_IMAGE_NAME}"
+
+FROM $SOURCE_IMAGE:latest
+
+# Metadata
+LABEL description="A container image with integrated Ollama and OpenWebUI for development environments."
+
+# Install Homebrew packages (assuming the base image is set up for Homebrew)
+RUN brew install gum && \
+    brew install ollama
+
+# Setup Ollama environment
+RUN mkdir -p /opt/ollama
+
+# Pull the OpenWebUI container image and configure it
+RUN podman pull ghcr.io/open-webui/open-webui:latest && \
+    podman create --name ollama-web -e OLLAMA_BASE_URL=http://localhost:11434 \
+    -e WEBUI_SECRET_KEY=abc123 -e DEFAULT_USER_ROLE=admin -e ENABLE_SIGNUP=true \
+    -p 8080:8080 ghcr.io/open-webui/open-webui:latest
+
+# Expose ports for Ollama and OpenWebUI
+EXPOSE 11434 8080
+
+# Configure entrypoint and command to keep the container running and services operational
+ENTRYPOINT ["podman", "systemd", "--user"]
+CMD ["--keep-running"]
