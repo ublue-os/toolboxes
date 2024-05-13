@@ -1,0 +1,10 @@
+ca-certificates
+curl
+libffi
+libgcc
+libssl3
+libstdc++
+openssl
+powershell
+python3
+zlib
