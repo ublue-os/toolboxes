@@ -59,7 +59,7 @@ jobs:
         uses: redhat-actions/buildah-build@v2
         with:
           containerfiles: |
-            ./toolboxes/wolfi-toolbox/Containerfile.wolfi
+            ./toolboxes/powershell-toolbox/Containerfile.powershell
           image: ${{ matrix.image_name }}
           tags: ${{ env.IMAGE_TAGS }}
           build-args: |
