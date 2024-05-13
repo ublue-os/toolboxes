@@ -1,0 +1,22 @@
+# hadolint ignore=DL3007
+FROM ghcr.io/ublue-os/wolfi-base:latest
+
+LABEL com.github.containers.toolbox="true" \
+	name="powershell-toolbox" \
+	usage="This image is meant to be used with the toolbox or distrobox command" \
+	description="A container image with integrated Powershell and Microsoft tooling for development environments."
+
+# COPY ./toolboxes/powershell-toolbox/packages.powershell /tmp
+COPY packages.powershell /tmp
+
+SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
+
+RUN apk upgrade && \
+	grep -v '^#' /tmp/packages.powershell | xargs apk add --no-cache
+
+ENV POWERSHELL_TELEMETRY_OPTOUT=1
+ENV DOTNET_CLI_TELEMETRY_OPTOUT=1
+
+RUN az config set core.collect_telemetry=no && \
+	rm -rf /tmp/*
+
