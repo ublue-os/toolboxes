@@ -13,7 +13,7 @@ Centralized repository of containers designed for Toolbox/Distrobox with batteri
 - `fedora-toolbox` - a Fedora base image
 - `wolfi-toolbox` - a WolfiOS base image
 - `bluefin-cli` - a WolfiOS based image with Homebrew and a strongly opinionated default experience
-- `powershell-toolbox` - a WolfiOS based image with PowerShell and other Microsoft related tooling 
+- `powershell-toolbox` - a WolfiOS based image with PowerShell and other Microsoft related tooling
 
 It is strongly recommended that the [Ptyxis terminal](https://gitlab.gnome.org/chergert/ptyxis) be used with these toolboxes and is the default experience in both [Bazzite](https://bazzite.gg) and [Bluefin](https://projectbluefin.io).
 
@@ -23,7 +23,7 @@ It is strongly recommended that the [Ptyxis terminal](https://gitlab.gnome.org/c
 
 Podman supports starting containers via a systemd generator. Quadlets replaced the `podman generate systemd` command and provide a method to create a systemd service for managing your container. The generated unit file can automatically start your container on login, automatically check for updates from the registry, and automatically clean-up the container and any transient volumes when the container stops. This provides an ideal way to have a clean slate on each login.
 
-Inside the quadlets directory are example quadlets each of the toolboxes listed above. Distrobox and Toolbox provide a convenient way to integrate the containers into your host.`ubuntu-toolbox` and `fedora-toolbox` can use either toolbox or distrobox. `wolfi-toolbox`, `bluefin-cli` and `powershell-toolbox` (WolfiOS base) are currently only compatible with distrobox. 
+Inside the quadlets directory are example quadlets each of the toolboxes listed above. Distrobox and Toolbox provide a convenient way to integrate the containers into your host.`ubuntu-toolbox` and `fedora-toolbox` can use either toolbox or distrobox. `wolfi-toolbox`, `bluefin-cli` and `powershell-toolbox` (WolfiOS base) are currently only compatible with distrobox.
 
 The quadlets mimic the create and enter commands to setup the container. You can use these by copying them to `~/.config/containers/systemd`. When using the Prompt terminal, they will appear in the menu as available containers. The `Exec=` line of the distrobox quadlets can be modified to include additional packages.
 
@@ -39,15 +39,15 @@ To utilize these, place the user service file in `~/.config/systemd/user` and ma
 
 ### Bluefin-CLI
 
-`bluefin-cli` is built from `wolfi-toolbox`. It contains [Homebrew](https://brew.sh/) configured out of the box. The brew state is bind mounted to a directory from your `$HOME`. Unlike the other toolboxes, `bluefin-cli` is intended for CLI applications _only_. 
+`bluefin-cli` is built from `wolfi-toolbox`. It contains [Homebrew](https://brew.sh/) configured out of the box. The brew state is bind mounted to a directory from your `$HOME`. Unlike the other toolboxes, `bluefin-cli` is intended for CLI applications _only_.
 
-Its primary purpose is to be **the** command line companion to Flathub-enabled systems by providing access to one of the largest command line repositories in the world via homebrew. Developer dependencies should be managed seperately via [devcontainers](https://github.com/devcontainers).  
+Its primary purpose is to be **the** command line companion to Flathub-enabled systems by providing access to one of the largest command line repositories in the world via homebrew. Developer dependencies should be managed seperately via [devcontainers](https://github.com/devcontainers).
 
 The default configuration destroys and updates this container daily so that the toolbox is built from scratch.
 
-Updates to brew itself happen automatically when the container rebuilds. Brew will automatically upgrade packages as you use it. Brew's state is also volume mounted to a file in your home directory so your container is fresh but your packages remain untouched. At this time it is **strongly recommended** to maintain a backup of your brew package list via the [brew bundle](https://docs.brew.sh/Manpage#bundle-subcommand) subcommand.  
+Updates to brew itself happen automatically when the container rebuilds. Brew will automatically upgrade packages as you use it. Brew's state is also volume mounted to a file in your home directory so your container is fresh but your packages remain untouched. At this time it is **strongly recommended** to maintain a backup of your brew package list via the [brew bundle](https://docs.brew.sh/Manpage#bundle-subcommand) subcommand.
 
-The [WolfiOS](https://edu.chainguard.dev/open-source/wolfi/overview/) apk package manager is preferred for fully declarative setups with [boxkit](https://github.com/ublue-os/boxkit). You can file package requests on the [WolfiOS repository](https://github.com/wolfi-dev/) for packages that you may need. We are working on a way to do this locally as well. 
+The [WolfiOS](https://edu.chainguard.dev/open-source/wolfi/overview/) apk package manager is preferred for fully declarative setups with [boxkit](https://github.com/ublue-os/boxkit). You can file package requests on the [WolfiOS repository](https://github.com/wolfi-dev/) for packages that you may need. We are working on a way to do this locally as well.
 
 The intended endstate of `bluefin-cli` is a fully automated declarative config managed via git using Wolfi packages for clean rebuilds daily. `brew` is used to fill out the "long tail" of existing software.
 
@@ -55,7 +55,7 @@ Both `bluefin-cli` and `wolfi-toolbox` have Wolfi developer variants built from 
 
 ### PowerShell-Toolbox
 
-`powershell-toolbox` is based on `WolfiOS`. Its primary purpose is to be a dedicated container for Microsoft related technologies used during development. It contains [PowerShell](https://github.com/PowerShell/PowerShell), [Azure CLI](https://github.com/Azure/azure-cli) and [.NET](https://github.com/dotnet/core) (latest LTS) configured out of the box. It also includes a small selection of other useful CLI utilities to improve the overall experience.  
+`powershell-toolbox` is based on `WolfiOS`. Its primary purpose is to be a dedicated container for Microsoft related technologies used during development. It contains [PowerShell](https://github.com/PowerShell/PowerShell), [Azure CLI](https://github.com/Azure/azure-cli) and [.NET](https://github.com/dotnet/core) (latest LTS) configured out of the box. It also includes a small selection of other useful CLI utilities to improve the overall experience.
 
 # Stats
 
