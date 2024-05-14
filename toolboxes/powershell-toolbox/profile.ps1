@@ -4,10 +4,6 @@ oh-my-posh init pwsh --config 'https://raw.githubusercontent.com/JanDeDobbeleer/
 # Zoxide
 Invoke-Expression (& { (zoxide init powershell | Out-String) })
 
-# McFly
-Invoke-Expression -Command $(mcfly init powershell | Out-String)
-# $env:MCFLY_LIGHT = "TRUE"
-
 # PSReadLine
 if ((Get-InstalledModule `
     -Name "PSReadLine" `
@@ -35,6 +31,10 @@ Set-PSReadLineOption -EditMode Windows
 
 # Set shortcuts to begin fzf searching
 Set-PsFzfOption -PSReadlineChordProvider 'Ctrl+t' -PSReadlineChordReverseHistory 'Ctrl+f'
+
+# McFly
+Invoke-Expression -Command $(mcfly init powershell | Out-String)
+# $env:MCFLY_LIGHT = "TRUE"
 
 # PowerShell parameter completion shim for the dotnet CLI
 Register-ArgumentCompleter -Native -CommandName dotnet -ScriptBlock {
