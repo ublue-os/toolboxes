@@ -6,17 +6,30 @@ LABEL com.github.containers.toolbox="true" \
 	usage="This image is meant to be used with the toolbox or distrobox command" \
 	description="A container image with integrated Powershell and Microsoft tooling for development environments."
 
-# COPY ./toolboxes/powershell-toolbox/packages.powershell /tmp
-COPY packages.powershell /tmp
-
-SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
-
-RUN apk upgrade && \
-	grep -v '^#' /tmp/packages.powershell | xargs apk add --no-cache
-
 ENV POWERSHELL_TELEMETRY_OPTOUT=1
 ENV DOTNET_CLI_TELEMETRY_OPTOUT=1
 
-RUN az config set core.collect_telemetry=no && \
-	rm -rf /tmp/*
+# COPY ./toolboxes/powershell-toolbox/packages.powershell /tmp
+COPY packages.powershell /tmp
+# COPY ./toolboxes/powershell-toolbox/profile.ps1 /tmp/Microsoft.PowerShell_profile.ps1
+COPY profile.ps1 /tmp/Microsoft.PowerShell_profile.ps1
+
+SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
+
+RUN apk upgrade \
+	&& grep -v '^#' /tmp/packages.powershell | xargs apk add --no-cache \
+  && dotnet tool install --global PowerShell \
+  && az config set core.collect_telemetry=no \
+  && curl -s https://ohmyposh.dev/install.sh | bash -s \
+  && curl -LSfs https://raw.githubusercontent.com/cantino/mcfly/master/ci/install.sh | sh -s -- --git cantino/mcfly \
+  && mkdir -p ~/.config/powershell \
+  && cp /tmp/Microsoft.PowerShell_profile.ps1 ~/.config/powershell \
+  && mkdir -p ~/.local/share/powershell/PSReadLine \
+  && touch ~/.local/share/powershell/PSReadLine/ConsoleHost_history.txt \
+  && rm -rf /tmp/*
+
+ENV DOTNET_TOOLS=~/.dotnet/tools
+ENV PATH=${DOTNET_TOOLS}:${PATH}
+
+
 
