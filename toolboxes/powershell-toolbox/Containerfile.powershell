@@ -21,6 +21,7 @@ RUN apk upgrade \
   && dotnet tool install --global PowerShell \
   && az config set core.collect_telemetry=no \
   && curl -s https://ohmyposh.dev/install.sh | bash -s \
+  && curl -s https://ohmyposh.dev/install.sh | bash -s -- -t /usr/local/share/oh-my-posh/themes \
   && curl -LSfs https://raw.githubusercontent.com/cantino/mcfly/master/ci/install.sh | sh -s -- --git cantino/mcfly \
   && mkdir -p ~/.config/powershell \
   && cp /tmp/Microsoft.PowerShell_profile.ps1 ~/.config/powershell \
