@@ -34,6 +34,8 @@ Set-PsFzfOption -PSReadlineChordProvider 'Ctrl+t' -PSReadlineChordReverseHistory
 
 # McFly
 Invoke-Expression -Command $(mcfly init powershell | Out-String)
+$env:MCFLY_RESULTS=50
+# $env:MCFLY_RESULTS_SORT="LAST_RUN" # defaults to RANK
 # $env:MCFLY_LIGHT = "TRUE"
 
 # PowerShell parameter completion shim for the dotnet CLI
