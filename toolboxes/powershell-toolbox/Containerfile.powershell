@@ -25,6 +25,7 @@ RUN apk upgrade \
   && curl -LSfs https://raw.githubusercontent.com/cantino/mcfly/master/ci/install.sh | sh -s -- --git cantino/mcfly \
   && mkdir -p ~/.config/powershell \
   && cp /tmp/Microsoft.PowerShell_profile.ps1 ~/.config/powershell \
+  && cp /tmp/profile.ps1 "$(~/.dotnet/tools/pwsh -Command "\$PROFILE.AllUsersAllHosts")" \
   && mkdir -p ~/.local/share/powershell/PSReadLine \
   && touch ~/.local/share/powershell/PSReadLine/ConsoleHost_history.txt \
   && rm -rf /tmp/*
