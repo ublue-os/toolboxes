@@ -23,6 +23,8 @@ RUN rm /etc/apt/apt.conf.d/docker-gzip-indexes /etc/apt/apt.conf.d/docker-no-lan
     rm /toolbox-packages && \
     mkdir /usr/share/empty && \
     userdel --remove ubuntu && \
+    curl -sLo /usr/bin/host-spawn https://github.com/1player/host-spawn/releases/download/1.5.0/host-spawn-x86_64 && \
+    chmod +x /usr/bin/host-spawn && \
     rm /etc/apt/apt.conf.d/20apt-esm-hook.conf && \
     ln -s /usr/libexec/flatpak-xdg-utils/flatpak-spawn /usr/bin/ && \
     ln -fs /usr/bin/distrobox-host-exec /usr/local/bin/docker && \
