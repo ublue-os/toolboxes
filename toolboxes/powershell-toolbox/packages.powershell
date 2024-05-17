@@ -1,3 +1,11 @@
 az
+bat
 dotnet-8-sdk
-powershell
+eza
+fd
+fzf
+gawk
+jq
+ripgrep
+sed
+zoxide
