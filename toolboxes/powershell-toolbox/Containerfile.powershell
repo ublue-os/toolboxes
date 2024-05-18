@@ -1,5 +1,5 @@
 # hadolint ignore=DL3007
-FROM ghcr.io/ublue-os/wolfi-base:latest
+FROM ghcr.io/ublue-os/wolfi-toolbox:latest
 
 LABEL com.github.containers.toolbox="true" \
 	name="powershell-toolbox" \
@@ -9,12 +9,10 @@ LABEL com.github.containers.toolbox="true" \
 ENV POWERSHELL_TELEMETRY_OPTOUT=1
 ENV DOTNET_CLI_TELEMETRY_OPTOUT=1
 
-COPY packages.powershell /tmp
-COPY profile.ps1 /tmp
-# COPY ./toolboxes/powershell-toolbox/packages.powershell /tmp
-# COPY ./toolboxes/powershell-toolbox/profile.ps1 /tmp
-
-SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
+# COPY packages.powershell /tmp
+# COPY profile.ps1 /tmp
+COPY ./toolboxes/powershell-toolbox/packages.powershell /tmp
+COPY ./toolboxes/powershell-toolbox/profile.ps1 /tmp
 
 RUN apk upgrade \
 	&& grep -v '^#' /tmp/packages.powershell | xargs apk add --no-cache \
@@ -23,12 +21,17 @@ RUN apk upgrade \
   && curl -s https://ohmyposh.dev/install.sh | bash -s -- -t /usr/local/share/oh-my-posh/themes \
   && curl -LSfs https://raw.githubusercontent.com/cantino/mcfly/master/ci/install.sh | sh -s -- --git cantino/mcfly \
   && cp /tmp/profile.ps1 "$(~/.dotnet/tools/pwsh -Command "\$PROFILE.AllUsersAllHosts")" \
-  && mkdir -p ~/.local/share/powershell/PSReadLine \
-  && touch ~/.local/share/powershell/PSReadLine/ConsoleHost_history.txt \
+  && echo 'if test ! -f ${XDG_DATA_HOME:-${HOME}/.local/share}/powershell/PSReadLine/ConsoleHost_history.txt; then mkdir -p ${XDG_DATA_HOME:-${HOME}/.local/share}/powershell/PSReadLine/ && touch ${XDG_DATA_HOME:-${HOME}/.local/share}/powershell/PSReadLine/ConsoleHost_history.txt; fi' > /etc/profile.d/mcfly-history.sh \
+  && printf 'LANG=en_US.utf8\nexport LANG\n' > /etc/profile.d/locale.sh \
+  && printf 'exec /usr/lib/dotnet/tools/pwsh' > /etc/profile.d/zz-pwsh.sh \
+  && mkdir -p /etc/zsh \
+  && printf 'LANG=en_US.utf8\nexport LANG\nexec /usr/lib/dotnet/tools/pwsh' >> /etc/zsh/zlogin \
+  && mkdir -p /etc/fish \
+  && printf 'if status is-login\n\tset -gx LANG en_US.utf8\n\texec /usr/lib/dotnet/tools/pwsh\nend\n' >> /etc/fish/config.fish \
+  && cp -r ~/.dotnet /usr/lib/dotnet \
+  && printf 'LANG="en_US.UTF-8"' > /etc/locale.conf \
+  && chown -R 1000:1000 /usr/lib/dotnet \
   && rm -rf /tmp/*
 
-ENV DOTNET_TOOLS=~/.dotnet/tools
+ENV DOTNET_TOOLS=/usr/lib/dotnet/tools
 ENV PATH=${DOTNET_TOOLS}:${PATH}
-
-
-
