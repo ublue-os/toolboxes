@@ -19,8 +19,12 @@ RUN apk update && \
     mv /home/linuxbrew /home/homebrew && \
     rm /toolbox-packages
 
-# Use and configure bash, retrieve bash-prexec
+# Configure Locales and get bash-prexec
 RUN curl https://raw.githubusercontent.com/rcaloras/bash-preexec/master/bash-preexec.sh -o /tmp/bash-prexec && \
-    mkdir -p /usr/share/ && \
-    cp /tmp/bash-prexec /usr/share/bash-prexec && \
-    rm -rf /tmp/*
+    && mkdir -p /usr/share/ \
+    && cp /tmp/bash-prexec /usr/share/bash-prexec \
+    && printf 'LANG=en_US.utf8\nexport LANG\n' > /etc/profile.d/locale.sh \
+    && printf 'LANG=en_US.utf8\nexport LANG\n' >> /etc/zsh/zlogin \
+    && printf 'if status is-login\n\tset -gx LANG en_US.utf8\nend\n' >> /etc/fish/config.fish \
+    && printf 'LANG="en_US.UTF-8"' > /etc/locale.conf \
+    && rm -rf /tmp/*
