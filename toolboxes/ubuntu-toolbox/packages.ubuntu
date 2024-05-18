@@ -12,6 +12,7 @@ dirmngr
 findutils
 fish
 fzf
+git
 gnupg
 gnupg2
 gnupg-l10n
