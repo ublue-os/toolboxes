@@ -105,6 +105,7 @@ plocate
 procps
 progress
 rsync
+software-properties-common
 sudo
 tcpdump
 time
