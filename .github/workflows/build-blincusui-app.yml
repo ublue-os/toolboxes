@@ -16,7 +16,7 @@ concurrency:
 jobs:
   push-ghcr:
     name: Build and push image
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-22.04
     permissions:
       contents: read
       packages: write
@@ -86,8 +86,6 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-          extra-args: |
-            --compression-format=zstd:chunked
 
       # Sign container
       - uses: sigstore/cosign-installer@v3.5.0
