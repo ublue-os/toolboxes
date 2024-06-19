@@ -70,11 +70,10 @@ jobs:
         id: build_image
         uses: docker/build-push-action@v6
         with:
-          file: ./apps/docker/Containerfile.docker
-          images: ${{ env.IMAGE_NAME }}
-          tags: ${{ env.IMAGE_TAGS }}
-          labels: ${{ steps.meta.output.labels }}
           push: ${{ github.event_name != 'pull_request' }}
+          file: ./apps/docker/Containerfile.docker
+          labels: ${{ steps.meta.output.labels }}
+          tags: ${{  steps.meta.output.tags  }}
 
       # Sign container
       - uses: sigstore/cosign-installer@v3.5.0
