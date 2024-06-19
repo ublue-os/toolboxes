@@ -72,8 +72,8 @@ jobs:
         with:
           push: ${{ github.event_name != 'pull_request' }}
           file: ./apps/docker/Containerfile.docker
-          labels: ${{ steps.meta.output.labels }}
-          tags: ${{  steps.meta.output.tags  }}
+          labels: ${{ steps.meta.outputs.labels }}
+          tags: ${{  steps.meta.outputs.tags  }}
 
       # Sign container
       - uses: sigstore/cosign-installer@v3.5.0
