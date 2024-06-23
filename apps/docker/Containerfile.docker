@@ -1,23 +1,27 @@
 FROM ghcr.io/ublue-os/ubuntu-toolbox
 
-RUN apt-get update && \
-    apt-get install -y \
-        ca-certificates \
-        curl \
-        systemd && \
-    mkdir -p /etc/apt/keyrings/ && \
-    curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o \
-        /etc/apt/keyrings/docker.asc && \
-    echo "deb [arch=$(dpkg --print-architecture) \
-         signed-by=/etc/apt/keyrings/docker.asc] \
-         https://download.docker.com/linux/ubuntu \
-         $(. /etc/os-release && echo "$VERSION_CODENAME") stable" \
-         > /etc/apt/sources.list.d/docker.list && \
-    apt-get update && \
-    apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin && \
-    apt-get clean && \
-    mkdir -p /var/lib/docker && \
-    groupmod -g 252 docker && \
-    systemctl enable docker.socket
-
+RUN <<EOF
+apt-get update
+DEBIAN_FRONTEND=noninteractive apt-get install -y ca-certificates curl socat systemd
+mkdir -p /etc/apt/keyrings/
+curl -fsSL https://get.docker.com -o /tmp/get-docker.sh
+sh /tmp/get-docker.sh
+apt-get clean
+mkdir -p /var/lib/docker
+rm -rf /var/lib/docker/**
+rm -f /usr/local/bin/docker
+cat > /usr/lib/systemd/system/docker-setup.service <<- EEOF
+[Unit]
+Description=Setup Docker Socket in /var/run/
+After=docker.socket
+[Service]
+PassEnvironment=DOCKERGROUP
+ExecStart=/usr/bin/bash -c "while true; do sleep 1; /usr/bin/socat UNIX-LISTEN:/run/host/var/run/docker.sock,reuseaddr,fork,group=\${DOCKERGROUP:-docker},umask=007 UNIX-CONNECT:/var/run/docker.sock; done"
+[Install]
+WantedBy=sockets.target
+EEOF
+groupmod -g 252 docker
+systemctl enable docker-setup.service
+rm -rf /tmp /var/tmp
+EOF
 CMD ["/sbin/init"]
