@@ -46,6 +46,7 @@ libgl1
 libgl1-amber-dri
 libgl1-mesa-dri
 libglapi-mesa
+libglib2.0-bin
 libglvnd0
 libglx0
 libglx-mesa0
