@@ -30,7 +30,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Verify Ublue-OS Ubuntu toolbox
-        uses: EyeCantCU/cosign-action/verify@v0.2.2
+        uses: EyeCantCU/cosign-action/verify@v0.3.0
         with:
           containers: ubuntu-toolbox:latest
           pubkey: https://raw.githubusercontent.com/ublue-os/toolboxes/main/cosign.pub
