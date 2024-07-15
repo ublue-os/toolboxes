@@ -39,7 +39,7 @@ jobs:
           fi
 
       - name: Verify base image
-        uses: EyeCantCU/cosign-action/verify@v0.2.2
+        uses: EyeCantCU/cosign-action/verify@v0.3.0
         with:
           containers: ${{ env.SOURCE_IMAGE_NAME }}
 
