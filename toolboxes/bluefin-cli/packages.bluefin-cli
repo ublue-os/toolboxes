@@ -12,6 +12,5 @@ rclone
 ripgrep
 sed
 starship
-uutils
 zoxide
 zsh
