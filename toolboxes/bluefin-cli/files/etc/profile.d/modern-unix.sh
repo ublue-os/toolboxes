@@ -18,3 +18,6 @@ alias cd='cd' 2>/dev/null
 
 # Fd for find
 alias find='fd' 2>/dev/null
+
+# bat for cat
+alias cat='bat --style=plain --pager=never' 2>/dev/null
