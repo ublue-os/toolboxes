@@ -10,6 +10,7 @@ Centralized repository of containers designed for Toolbox/Distrobox with batteri
 ## Images
 
 - `ubuntu-toolbox` - an Ubuntu base image
+- `debian-toolbox` - a Debian base image
 - `fedora-toolbox` - a Fedora base image
 - `wolfi-toolbox` - a WolfiOS base image
 - `bluefin-cli` - a WolfiOS based image with Homebrew and a strongly opinionated default experience
@@ -60,7 +61,8 @@ Both `bluefin-cli` and `wolfi-toolbox` have Wolfi developer variants built from 
 `powershell-toolbox` is based on `WolfiOS`. Its primary purpose is to be a dedicated container for Microsoft related technologies used during development. It contains [PowerShell](https://github.com/PowerShell/PowerShell), [Azure CLI](https://github.com/Azure/azure-cli) and [.NET](https://github.com/dotnet/core) (latest LTS) configured out of the box. It also includes a small selection of other useful CLI utilities to improve the overall experience.
 
 ### Incus and Docker Distrobox
-Both `incus-distrobox` and `docker-distrobox` are designed to be run with a rootful, init distrobox. [Incus](https://linuxcontainers.org/incus/) uses packages built by [Zabbly](https://github.com/zabbly/incus). [Docker](https://www.docker.com/) uses the [convience install script](https://docs.docker.com/engine/install/ubuntu/#install-using-the-convenience-script) from Docker.  Both are built from the ubuntu-toolbox built in this repo. Example distrobox-assemble files are with each of them. Both work well with a volume mount for their respective files in `/var/lib/{docker,incus}`. Both can be setup to autostart on boot with a `systemd service`. However, your user sockets for `Xorg`, `Wayland`, and `Pulseaudio` will not be setup until you login. For the `docker-distrobox` you can customize the group of the exported `docker socket` by setting an environment variable at distrobox creation time for `DOCKERGROUP`. The assemble file has more information. Both the `incus-distrobox` and `docker-distrobox` set the unix-groups. For incus, matching `incus-admin` inside the distrobox and on the host will enable you to use the `incus socket` from the host.
+
+Both `incus-distrobox` and `docker-distrobox` are designed to be run with a rootful, init distrobox. [Incus](https://linuxcontainers.org/incus/) uses packages built by [Zabbly](https://github.com/zabbly/incus). [Docker](https://www.docker.com/) uses the [convience install script](https://docs.docker.com/engine/install/ubuntu/#install-using-the-convenience-script) from Docker. Both are built from the ubuntu-toolbox built in this repo. Example distrobox-assemble files are with each of them. Both work well with a volume mount for their respective files in `/var/lib/{docker,incus}`. Both can be setup to autostart on boot with a `systemd service`. However, your user sockets for `Xorg`, `Wayland`, and `Pulseaudio` will not be setup until you login. For the `docker-distrobox` you can customize the group of the exported `docker socket` by setting an environment variable at distrobox creation time for `DOCKERGROUP`. The assemble file has more information. Both the `incus-distrobox` and `docker-distrobox` set the unix-groups. For incus, matching `incus-admin` inside the distrobox and on the host will enable you to use the `incus socket` from the host.
 
 # Stats
 
