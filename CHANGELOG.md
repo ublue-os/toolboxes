@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.0.1](https://github.com/ublue-os/toolboxes/compare/v1.0.0...v1.0.1) (2025-01-03)
+
+
+### Bug Fixes
+
+* Actually build debian toolbox from debian ([24dc96a](https://github.com/ublue-os/toolboxes/commit/24dc96a0f8d3bbc069dbb0ad57c55373590e8aa2))
+* remove missing apt config ([28c6827](https://github.com/ublue-os/toolboxes/commit/28c6827018615a12934df4505da8c1603a54b471))
+
 ## 1.0.0 (2024-11-16)
 
 
