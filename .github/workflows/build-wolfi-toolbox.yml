@@ -97,6 +97,8 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+          extra-args: |
+            --compression-format=zstd:chunked
 
       # Sign container
       - uses: sigstore/cosign-installer@v3.7.0
