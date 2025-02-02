@@ -1,0 +1,8 @@
+[Unit]
+Description=Arch Toolbox for your distrobox fun
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/distrobox assemble create --replace -f /etc/distrobox/distrobox.ini -n arch-toolbox
+ExecStart=/usr/bin/distrobox enter arch-toolbox
+RemainAfterExit=true

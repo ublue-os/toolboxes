@@ -1,0 +1,8 @@
+[Unit]
+Description=Arch Toolbox with AMD GPU PRO for your distrobox fun
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/distrobox assemble create --replace -f /etc/distrobox/distrobox.ini -n arch-toolbox-amdgpupro
+ExecStart=/usr/bin/distrobox enter arch-toolbox-amdgpupro
+RemainAfterExit=true
