@@ -1,5 +1,9 @@
 FROM quay.io/toolbx/arch-toolbox AS arch-toolbox
 
+LABEL com.github.containers.toolbox="true" \
+      usage="This image is meant to be used with the toolbox or distrobox command" \
+      summary="A cloud-native terminal experience powered by Arch Linux"
+
 # Pacman Initialization
 # Create build user
 RUN sed -i 's/#Color/Color/g' /etc/pacman.conf && \

@@ -1,5 +1,9 @@
 FROM ghcr.io/ublue-os/arch-toolbox AS arch-toolbox-amdgpupro
 
+LABEL com.github.containers.toolbox="true" \
+      usage="This image is meant to be used with the toolbox or distrobox command" \
+      summary="A cloud-native terminal experience powered by Arch Linux with AMDGPU PRO"
+
 # Install amdgpu-pro, remove other drivers
 RUN useradd -m --shell=/bin/bash build && usermod -L build && \
     echo "build ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers && \
