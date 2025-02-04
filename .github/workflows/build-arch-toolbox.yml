@@ -1,4 +1,4 @@
-name: Build Arch-Distrobox
+name: Build Arch-Toolbox
 on:
   schedule:
     - cron: '20 18 * * *'  # 8:20pm everyday

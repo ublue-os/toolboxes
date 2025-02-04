@@ -1,14 +1,14 @@
 [Unit]
-Description=Fedora Toolbox for your toolbox needs
+Description=Arch Toolbox for your toolbox needs
 
 [Container]
 AutoUpdate=registry
-ContainerName=fedora-toolbox-quadlet
+ContainerName=arch-toolbox-quadlet
 Environment=TOOLBOX_PATH=/usr/bin/toolbox
 Environment=XDG_RUNTIME_DIR=%t
 Exec=init-container --gid %G --home %h --shell %s --uid %U --user %u --home-link --media-link --mnt-link
-HostName=fedora-toolbox-quadlet
-Image=ghcr.io/ublue-os/fedora-toolbox:latest
+HostName=arch-toolbox-quadlet
+Image=ghcr.io/ublue-os/arch-toolbox:latest
 Mount=type=devpts,destination=/dev/pts
 Network=host
 PodmanArgs=--cgroupns host
