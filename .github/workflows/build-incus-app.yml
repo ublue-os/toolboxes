@@ -91,7 +91,7 @@ jobs:
             --compression-format=zstd:chunked
 
       # Sign container
-      - uses: sigstore/cosign-installer@v3.7.0
+      - uses: sigstore/cosign-installer@v3.8.0
         if: github.event_name != 'pull_request'
 
       - name: Sign container image
