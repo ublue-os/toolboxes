@@ -8,7 +8,7 @@ ContainerName=arch-distrobox-quadlet
 Environment=SHELL=%s
 Environment=HOME=%h
 Environment=container=podman
-Exec=--verbose --name %u --user %U --group %G --home %h --init "0" --nvidia "1" -- " "
+Exec=--verbose --name %u --user %U --group %G --home %h --init "0" -- " "
 Image=ghcr.io/ublue-os/arch-toolbox:latest
 HostName=arch-toolbox.%l
 Label=manager=distrobox
