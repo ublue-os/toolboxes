@@ -50,7 +50,7 @@ jobs:
 
       # Maximize build space for DX
       - name: Maximize build space
-        uses: ublue-os/remove-unwanted-software@v8
+        uses: ublue-os/remove-unwanted-software@v9
         if: matrix.image_name == 'wolfi-dx-toolbox'
 
       # Build image using Buildah action
