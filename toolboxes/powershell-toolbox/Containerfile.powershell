@@ -18,7 +18,7 @@ RUN apk upgrade \
 	&& grep -v '^#' /tmp/packages.powershell | xargs apk add --no-cache \
   && dotnet tool install --global PowerShell \
   && az config set core.collect_telemetry=no \
-  && curl -s https://ohmyposh.dev/install.sh | bash -s -- -t /usr/local/share/oh-my-posh/themes \
+  && curl -s https://ohmyposh.dev/install.sh | bash -s -- -d /usr/local/bin -t /usr/local/share/oh-my-posh/themes \
   && curl -LSfs https://raw.githubusercontent.com/cantino/mcfly/master/ci/install.sh | sh -s -- --git cantino/mcfly \
   && cp /tmp/profile.ps1 "$(~/.dotnet/tools/pwsh -Command "\$PROFILE.AllUsersAllHosts")" \
   && echo 'if test ! -f ${XDG_DATA_HOME:-${HOME}/.local/share}/powershell/PSReadLine/ConsoleHost_history.txt; then mkdir -p ${XDG_DATA_HOME:-${HOME}/.local/share}/powershell/PSReadLine/ && touch ${XDG_DATA_HOME:-${HOME}/.local/share}/powershell/PSReadLine/ConsoleHost_history.txt; fi' > /etc/profile.d/mcfly-history.sh \
