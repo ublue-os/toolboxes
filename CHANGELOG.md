@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.0.1](https://github.com/ublue-os/toolboxes/compare/v1.0.0...v1.0.1) (2025-04-10)
+
+
+### Bug Fixes
+
+* Actually build debian toolbox from debian ([24dc96a](https://github.com/ublue-os/toolboxes/commit/24dc96a0f8d3bbc069dbb0ad57c55373590e8aa2))
+* **build:** Move misplaced 'extra-args' param from docker/login-action to redhat-actions/push-to-registry. ([cbece4d](https://github.com/ublue-os/toolboxes/commit/cbece4d0572dd3c039924ac2306f3e842ac6c356))
+* remove missing apt config ([28c6827](https://github.com/ublue-os/toolboxes/commit/28c6827018615a12934df4505da8c1603a54b471))
+* **toolbox-quadlets:** Correct home and dns ([4385986](https://github.com/ublue-os/toolboxes/commit/43859867fef256d0f5cd6d7749b2a80d787403d1))
+
 ## 1.0.0 (2024-11-16)
 
 
