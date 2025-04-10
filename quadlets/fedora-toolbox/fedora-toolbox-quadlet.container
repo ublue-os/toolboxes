@@ -11,6 +11,7 @@ HostName=fedora-toolbox-quadlet
 Image=ghcr.io/ublue-os/fedora-toolbox:latest
 Mount=type=devpts,destination=/dev/pts
 Network=host
+PodmanArgs=--dns none
 PodmanArgs=--cgroupns host
 PodmanArgs=--ipc host
 PodmanArgs=--label com.github.containers.toolbox=true
@@ -25,7 +26,7 @@ User=root:root
 Volume=/:/run/host:rslave
 Volume=/dev:/dev:rslave
 Volume=/run/dbus/system_bus_socket:/run/dbus/system_bus_socket
-Volume=/var/%h:/var/%h:rslave
+Volume=/var/home/%u:/var/home/%u:rslave
 Volume=/usr/bin/toolbox:/usr/bin/toolbox:ro
 Volume=%t:%t
 Volume=/run/avahi-daemon/socket:/run/avahi-daemon/socket
