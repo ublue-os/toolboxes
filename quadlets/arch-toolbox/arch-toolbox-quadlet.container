@@ -1,0 +1,35 @@
+[Unit]
+Description=Arch Toolbox for your toolbox needs
+
+[Container]
+AutoUpdate=registry
+ContainerName=arch-toolbox-quadlet
+Environment=TOOLBOX_PATH=/usr/bin/toolbox
+Environment=XDG_RUNTIME_DIR=%t
+Exec=init-container --gid %G --home %h --shell %s --uid %U --user %u --home-link --media-link --mnt-link
+HostName=arch-toolbox-quadlet
+Image=ghcr.io/ublue-os/arch-toolbox:latest
+Mount=type=devpts,destination=/dev/pts
+Network=host
+PodmanArgs=--cgroupns host
+PodmanArgs=--ipc host
+PodmanArgs=--label com.github.containers.toolbox=true
+PodmanArgs=--no-hosts
+PodmanArgs=--pid host
+PodmanArgs=--privileged
+PodmanArgs=--security-opt label=disable
+PodmanArgs=--entrypoint toolbox
+Ulimit=host
+UserNS=keep-id
+User=root:root
+Volume=/:/run/host:rslave
+Volume=/dev:/dev:rslave
+Volume=/run/dbus/system_bus_socket:/run/dbus/system_bus_socket
+Volume=/var/%h:/var/%h:rslave
+Volume=/usr/bin/toolbox:/usr/bin/toolbox:ro
+Volume=%t:%t
+Volume=/run/avahi-daemon/socket:/run/avahi-daemon/socket
+Volume=/run/.heim_org.h5l.kcm-socket:/run/.heim_org.h5l.kcm-socket
+Volume=/run/pcscd/pcscd.comm:/run/pcscd/pcscd.comm
+Volume=/run/media:/run/media:rslave
+Volume=/etc/profile.d/toolbox.sh:/etc/profile.d/toolbox.sh:ro
