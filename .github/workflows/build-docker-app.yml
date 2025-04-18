@@ -27,10 +27,10 @@ jobs:
     steps:
       # Checkout push-to-registry action GitHub repository
       - name: Checkout Push to Registry action
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
 
       - name: Verify Ublue-OS Ubuntu toolbox
-        uses: EyeCantCU/cosign-action/verify@v0.3.0
+        uses: EyeCantCU/cosign-action/verify@58722a084c82190b57863002d494c91eabbe9e79 # v0.3.0
         with:
           containers: ubuntu-toolbox:latest
           pubkey: https://raw.githubusercontent.com/ublue-os/toolboxes/main/cosign.pub
@@ -40,13 +40,13 @@ jobs:
       # https://github.com/macbre/push-to-ghcr/issues/12
       - name: Lowercase Registry
         id: registry_case
-        uses: ASzc/change-string-case-action@v6
+        uses: ASzc/change-string-case-action@d0603cd0a7dd490be678164909f65c7737470a7f # v6
         with:
           string: ${{ env.IMAGE_REGISTRY }}
 
       # Build metadata
       - name: Image Metadata
-        uses: docker/metadata-action@v5
+        uses: docker/metadata-action@902fa8ec7d6ecbf8d84d538b9b233a880e428804 # v5
         id: meta
         with:
           images: |
@@ -58,7 +58,7 @@ jobs:
 
       # Login to Contaier Registry if not a PR
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@v3
+        uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772 # v3
         if: github.event_name != 'pull_request'
         with:
           registry: ghcr.io
@@ -68,7 +68,7 @@ jobs:
       # Build and Push Image
       - name: Build and Push Image
         id: build_image
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@471d1dc4e07e5cdedd4c2171150001c434f0b7a4 # v6
         with:
           push: ${{ github.event_name != 'pull_request' }}
           file: ./apps/docker/Containerfile.docker
@@ -76,7 +76,7 @@ jobs:
           tags: ${{  steps.meta.outputs.tags  }}
 
       # Sign container
-      - uses: sigstore/cosign-installer@v3.8.1
+      - uses: sigstore/cosign-installer@d7d6bc7722e3daa8354c50bcb52f4837da5e9b6a # v3.8.1
         if: github.event_name != 'pull_request'
 
       - name: Sign container image
