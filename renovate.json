@@ -1,6 +1,26 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "config:recommended"
+    "config:best-practices",
+  ],
+
+  "rebaseWhen": "never",
+
+  "packageRules": [
+    {
+      "automerge": true,
+      "matchUpdateTypes": ["pin", "pinDigest"]
+    },
+    {
+      "enabled": false,
+      "matchUpdateTypes": ["digest", "pinDigest", "pin"],
+      "matchDepTypes": ["container"],
+      "matchFileNames": [".github/workflows/**.yaml", ".github/workflows/**.yml"],
+    },
+    {
+      "automerge": true,
+      "matchUpdateTypes": ["digest"],
+      "matchDepNames": ["ghcr.io/ublue-os/fedora-toolbox", "ghcr.io/ublue-os/ubuntu-toolbox", "ghcr.io/ublue-os/wolfi-toolbox", "ghcr.io/ublue-os/arch-toolbox", "ghcr.io/ublue-os/powershell-toolbox",]
+    }
   ]
 }
