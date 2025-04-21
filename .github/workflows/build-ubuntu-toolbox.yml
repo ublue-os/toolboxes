@@ -24,6 +24,8 @@ jobs:
       id-token: write
     strategy:
       fail-fast: false
+      matrix:
+        image_name: ["ubuntu-toolbox"]
     steps:
       # Checkout push-to-registry action GitHub repository
       - name: Checkout Push to Registry action
