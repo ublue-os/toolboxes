@@ -1,0 +1,40 @@
+FROM ghcr.io/ublue-os/arch-toolbox AS arch-toolbox-amdgpupro
+
+LABEL com.github.containers.toolbox="true" \
+      usage="This image is meant to be used with the toolbox or distrobox command" \
+      summary="A cloud-native terminal experience powered by Arch Linux with AMDGPU PRO"
+
+# Install amdgpu-pro, remove other drivers
+RUN useradd -m --shell=/bin/bash build && usermod -L build && \
+    echo "build ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers && \
+    echo "root ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+
+USER build
+WORKDIR /home/build
+RUN paru -R \
+        libglvnd \
+        vulkan-intel \
+        vulkan-radeon \
+        mesa \
+        --noconfirm && \
+    paru -Syu \
+        amdgpu-pro-oglp \
+        lib32-amdgpu-pro-oglp \
+        vulkan-amdgpu-pro \
+        lib32-vulkan-amdgpu-pro \
+        amf-amdgpu-pro \
+        --noconfirm && \
+    sudo rm -rf /var/cache/pacman/pkg/* && \
+    rm -rf /home/build/.cache/*
+
+USER root
+WORKDIR /
+
+# Cleanup
+RUN userdel -r build && \
+    rm -drf /home/build && \
+    sed -i '/build ALL=(ALL) NOPASSWD: ALL/d' /etc/sudoers && \
+    sed -i '/root ALL=(ALL) NOPASSWD: ALL/d' /etc/sudoers && \
+    rm -rf \
+        /tmp/* \
+        /var/cache/pacman/pkg/*

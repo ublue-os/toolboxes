@@ -12,6 +12,8 @@ Centralized repository of containers designed for Toolbox/Distrobox with batteri
 - `ubuntu-toolbox` - an Ubuntu base image
 - `debian-toolbox` - a Debian base image
 - `fedora-toolbox` - a Fedora base image
+- `arch-toolbox` - an Arch base image
+- `arch-toolbox-amdgpupro` - an Arch base image with proprietary AMD GPU drivers
 - `wolfi-toolbox` - a WolfiOS base image
 - `bluefin-cli` - a WolfiOS based image with Homebrew and a strongly opinionated default experience
 - `powershell-toolbox` - a WolfiOS based image with PowerShell and other Microsoft related tooling
