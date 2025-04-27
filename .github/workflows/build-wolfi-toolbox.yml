@@ -1,7 +1,5 @@
 name: Build and Push Wolfi Toolbox Image
 on:
-  schedule:
-    - cron: '0 6,18 * * *'  # 6am and 6pm every day
   pull_request:
   merge_group:
   workflow_dispatch:

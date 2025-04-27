@@ -1,7 +1,5 @@
 name: Build and Push Docker App Toolbox
 on:
-  schedule:
-    - cron: '20 22 * * *'  # 10:20pm everyday
   pull_request:
   merge_group:
   workflow_dispatch:
