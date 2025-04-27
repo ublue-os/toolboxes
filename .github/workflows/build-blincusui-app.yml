@@ -1,7 +1,5 @@
 name: Build and Push BlincusUI App Toolbox
 on:
-  schedule:
-    - cron: '20 22 * * *'  # 10:20pm everyday
   merge_group:
   workflow_dispatch:
 env:
