@@ -91,5 +91,7 @@ jobs:
           COSIGN_PRIVATE_KEY: ${{ secrets.SIGNING_SECRET }}
 
       - name: Echo outputs
+        env:
+          BUILD_IMAGE_OUTPUTS: ${{ toJSON(steps.build_image.outputs) }}
         run: |
-          echo "${{ toJSON(steps.build_image.outputs) }}"
+          echo "$BUILD_IMAGE_OUTPUTS"
