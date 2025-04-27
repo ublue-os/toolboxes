@@ -2,6 +2,7 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "config:best-practices",
+    "schedule:daily"
   ],
 
   "rebaseWhen": "never",
@@ -19,8 +20,15 @@
     },
     {
       "automerge": true,
+      "groupName": "toolbox-images",
       "matchUpdateTypes": ["digest"],
-      "matchDepNames": ["ghcr.io/ublue-os/fedora-toolbox", "ghcr.io/ublue-os/ubuntu-toolbox", "ghcr.io/ublue-os/wolfi-toolbox", "ghcr.io/ublue-os/arch-toolbox", "ghcr.io/ublue-os/powershell-toolbox",]
+      "matchDepNames": [
+        "ghcr.io/ublue-os/fedora-toolbox",
+        "ghcr.io/ublue-os/ubuntu-toolbox",
+        "ghcr.io/ublue-os/wolfi-toolbox",
+        "ghcr.io/ublue-os/arch-toolbox",
+        "ghcr.io/ublue-os/powershell-toolbox",
+      ]
     }
   ]
 }
