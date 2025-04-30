@@ -23,7 +23,7 @@
       "groupName": "toolbox-images",
       "matchUpdateTypes": ["digest"],
       "matchDepNames": [
-        "docker.io/library/debian:bookworm",
+        "docker.io/library/debian",
         "ghcr.io/ublue-os/fedora-toolbox",
         "ghcr.io/ublue-os/ubuntu-toolbox",
         "ghcr.io/ublue-os/wolfi-toolbox",
