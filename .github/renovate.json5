@@ -24,6 +24,7 @@
       "matchUpdateTypes": ["digest"],
       "matchDepNames": [
         "docker.io/library/debian",
+        "docker.io/library/ubuntu",
         "ghcr.io/ublue-os/fedora-toolbox",
         "ghcr.io/ublue-os/ubuntu-toolbox",
         "ghcr.io/ublue-os/wolfi-toolbox",
