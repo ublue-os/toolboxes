@@ -23,6 +23,7 @@
       "groupName": "toolbox-images",
       "matchUpdateTypes": ["digest"],
       "matchDepNames": [
+        "cgr.dev/chainguard/wolfi-base"
         "docker.io/library/debian",
         "docker.io/library/ubuntu",
         "ghcr.io/ublue-os/fedora-toolbox",
