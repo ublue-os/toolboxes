@@ -1,4 +1,4 @@
-FROM ghcr.io/ublue-os/arch-toolbox@sha256:a2ca5339ab21f6f47877756eb488dc88bd99d5733246887210ada3e654873858 AS arch-toolbox-amdgpupro
+FROM ghcr.io/ublue-os/arch-toolbox@sha256:dbe8d9b80dcee9cb3e91b2209ab3ae195c5e962bd956ab171dd22490b47f9ff8 AS arch-toolbox-amdgpupro
 
 LABEL com.github.containers.toolbox="true" \
       usage="This image is meant to be used with the toolbox or distrobox command" \
