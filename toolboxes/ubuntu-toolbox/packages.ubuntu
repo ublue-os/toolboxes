@@ -9,6 +9,7 @@ dialog
 diffutils
 direnv
 dirmngr
+fd-find
 findutils
 fish
 fzf
