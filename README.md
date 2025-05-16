@@ -13,6 +13,8 @@ Centralized repository of containers designed for Toolbox/Distrobox with batteri
 - `debian-toolbox` - a Debian base image
 - `fedora-toolbox` - a Fedora base image
 - `arch-toolbox` - an Arch base image
+- `bazzite-arch` - an Arch based image that includes gaming utilities and Steam
+- `bazzite-arch-gnome` - Variation of Bazzite-arch for GNOME
 - `arch-toolbox-amdgpupro` - an Arch base image with proprietary AMD GPU drivers
 - `wolfi-toolbox` - a WolfiOS base image
 - `bluefin-cli` - a WolfiOS based image with Homebrew and a strongly opinionated default experience
