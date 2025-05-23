@@ -1,5 +1,5 @@
 # hadolint ignore=DL3007
-FROM ghcr.io/ublue-os/wolfi-toolbox:latest@sha256:2bfee79e334e8050df84a2cc26f587f5ce7cb303bb7abd57f4fc76cfc9aac07d
+FROM ghcr.io/ublue-os/wolfi-toolbox:latest@sha256:a961d9b858e4e876e5e6b1d7544361e5d0e5722f0363dd93d395914da61d8b8c
 
 LABEL com.github.containers.toolbox="true" \
 	name="powershell-toolbox" \
