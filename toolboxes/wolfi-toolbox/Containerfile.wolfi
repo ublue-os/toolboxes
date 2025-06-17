@@ -1,4 +1,4 @@
-FROM cgr.dev/chainguard/wolfi-base:latest@sha256:57428116d2d7c27d1d4de4103e19b40bb8d2942ff6dff31b900e55efedeb7e30
+FROM cgr.dev/chainguard/wolfi-base:latest@sha256:0cac3831501d73b388a1bd0e8ef7f26f07aa0c5d6117b1d15af517a91a1f894b
 # Thanks to Nuno do Carmo for the initial prototype
 
 LABEL com.github.containers.toolbox="true" \
