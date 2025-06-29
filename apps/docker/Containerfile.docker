@@ -1,4 +1,4 @@
-FROM ghcr.io/ublue-os/ubuntu-toolbox@sha256:c8dfbcbc4f338a69a6afe3252ebc5110f6ae16d37e038ba74df3ad8c207442a7
+FROM ghcr.io/ublue-os/ubuntu-toolbox@sha256:aed7724d9e4e1a4721999bff89f56942957d10e35089ef10182973cc36621688
 
 RUN <<EOF
 apt-get update
