@@ -1,4 +1,4 @@
-FROM ghcr.io/ublue-os/ubuntu-toolbox@sha256:e621cb00e0ec09213a274d4efdd321ad73c362ae87338b0cc1b151e67e8d1b09
+FROM ghcr.io/ublue-os/ubuntu-toolbox@sha256:2e100f8055116a0b58f47f82f6629e987230d7ffc693e3cf27d3ef2ff3caa4f4
 
 RUN apt-get update && \
     apt-get install -y \
