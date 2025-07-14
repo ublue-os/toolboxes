@@ -1,4 +1,4 @@
-FROM quay.io/toolbx/arch-toolbox@sha256:e651ce11fa9af10b291602ac1db9b579bd2439d85bb1b7d9cc71740141aca2c8 AS arch-toolbox
+FROM quay.io/toolbx/arch-toolbox@sha256:f40c4285bb18d56faecab866cc3dba6f416f39105e5c20c308ecdc041eb6ffde AS arch-toolbox
 
 LABEL com.github.containers.toolbox="true" \
       usage="This image is meant to be used with the toolbox or distrobox command" \
