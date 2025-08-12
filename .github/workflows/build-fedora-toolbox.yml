@@ -25,7 +25,7 @@ jobs:
     steps:
       # Checkout push-to-registry action GitHub repository
       - name: Checkout Push to Registry action
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v4
 
       - name: Verify Fedora distrobox
         uses: EyeCantCU/cosign-action/verify@58722a084c82190b57863002d494c91eabbe9e79 # v0.3.0
