@@ -1,4 +1,4 @@
-FROM registry.fedoraproject.org/fedora-toolbox:42@sha256:438ec4f864ccddcdd7061c3fb182744a5b1a5f80c5dc3a5e643eb60d44aa0b71 AS fedora-toolbox
+FROM registry.fedoraproject.org/fedora-toolbox:42@sha256:559c503d774b8d2d5152a7a0f2fb4ba04a8650fc4c5ca3e8950a7b31cf831813 AS fedora-toolbox
 
 LABEL com.github.containers.toolbox="true" \
       usage="This image is meant to be used with the toolbox or distrobox command" \
