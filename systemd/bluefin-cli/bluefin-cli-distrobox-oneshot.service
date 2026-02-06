@@ -1,9 +1,0 @@
-[Unit]
-Description=Bluefin-CLI, a wolfi container to provide you your brew
-Wants=bluefin-cli-Cellar
-
-[Service]
-Type=oneshot
-ExecStart=/usr/bin/distrobox assemble create --replace -f /etc/distrobox/distrobox.ini -n bluefin-cli
-ExecStart=/usr/bin/distrobox enter bluefin-cli
-RemainAfterExit=true
