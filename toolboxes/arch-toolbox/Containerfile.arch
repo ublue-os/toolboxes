@@ -51,6 +51,7 @@ RUN pacman -S \
         pinentry \
         procps-ng \
         rsync \
+        rust \
         shadow \
         sudo \
         tcpdump \
@@ -72,13 +73,15 @@ RUN pacman -S \
     rm -rf /var/cache/pacman/pkg/*
 
 # Add paru and install AUR packages
+# TODO: switch (back) to paru-bin once a new release is available.
+# See https://github.com/Morganamilo/paru/issues/1454#issuecomment-3663567951
 USER build
 WORKDIR /home/build
-RUN git clone https://aur.archlinux.org/paru-bin.git --single-branch && \
-    cd paru-bin && \
+RUN git clone https://aur.archlinux.org/paru.git --single-branch && \
+    cd paru && \
     makepkg -si --noconfirm && \
     cd .. && \
-    rm -drf paru-bin
+    rm -drf paru
 #    paru -S \
 #        aur/placeholder \
 #        --noconfirm
@@ -86,7 +89,9 @@ USER root
 WORKDIR /
 
 # Cleanup
+# remove rust as it was only installed for building paru
 RUN sed -i 's@#en_US.UTF-8@en_US.UTF-8@g' /etc/locale.gen && \
+    pacman -R rust --noconfirm && \
     userdel -r build && \
     rm -drf /home/build && \
     sed -i '/build ALL=(ALL) NOPASSWD: ALL/d' /etc/sudoers && \
