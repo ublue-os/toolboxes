@@ -49,7 +49,7 @@ libglx0
 libglx-mesa0
 libkrb5-3
 libksba8
-libllvm15
+libllvm19
 libnpth0
 libnsl2
 libnss-mdns
@@ -92,7 +92,6 @@ media-types
 mesa-vulkan-drivers
 mtr
 ncurses-base
-neofetch
 openssh-client
 openssl
 passwd
@@ -102,7 +101,6 @@ plocate
 procps
 progress
 rsync
-software-properties-common
 sudo
 tcpdump
 time
