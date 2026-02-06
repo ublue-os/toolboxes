@@ -1,4 +1,4 @@
-FROM docker.io/library/debian:trixie@sha256:2c91e484d93f0830a7e05a2b9d92a7b102be7cab562198b984a84fdbc7806d91
+FROM docker.io/library/debian:trixie@sha256:aca3e110b8fee2a2acdf8cbe6cef1cfebef52e5257da87fbd41920d3411c1aed
 # FROM https://hub.docker.com/_/debian
 
 LABEL com.github.containers.toolbox="true" \
