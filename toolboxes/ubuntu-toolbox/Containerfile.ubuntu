@@ -1,4 +1,4 @@
-FROM docker.io/library/ubuntu:24.04@sha256:cd1dba651b3080c3686ecf4e3c4220f026b521fb76978881737d24f200828b2b
+FROM docker.io/library/ubuntu:24.04@sha256:a4453623f2f8319cfff65c43da9be80fe83b1a7ce689579b475867d69495b782
 # FROM https://hub.docker.com/_/ubuntu
 
 LABEL com.github.containers.toolbox="true" \
