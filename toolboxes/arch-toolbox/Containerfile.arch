@@ -51,7 +51,6 @@ RUN pacman -S \
         pinentry \
         procps-ng \
         rsync \
-        rust \
         shadow \
         sudo \
         tcpdump \
