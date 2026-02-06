@@ -16,7 +16,6 @@ Centralized repository of containers designed for Toolbox/Distrobox with batteri
 - `bazzite-arch` - an Arch based image that includes gaming utilities and Steam
 - `bazzite-arch-gnome` - Variation of Bazzite-arch for GNOME
 - `wolfi-toolbox` - a WolfiOS base image
-- `powershell-toolbox` - a WolfiOS based image with PowerShell and other Microsoft related tooling
 - `docker-distrobox` - an Ubuntu distrobox with Docker-CE. It will export the docker socket to the host.
 - `incus-distrobox` - an Ubuntu distrobox with Incus packages from Zabbly.
 
@@ -28,7 +27,7 @@ It is strongly recommended that the [Ptyxis terminal](https://gitlab.gnome.org/c
 
 Podman supports starting containers via a systemd generator. Quadlets replaced the `podman generate systemd` command and provide a method to create a systemd service for managing your container. The generated unit file can automatically start your container on login, automatically check for updates from the registry, and automatically clean-up the container and any transient volumes when the container stops. This provides an ideal way to have a clean slate on each login.
 
-Inside the quadlets directory are example quadlets each of the toolboxes listed above. Distrobox and Toolbox provide a convenient way to integrate the containers into your host.`ubuntu-toolbox` and `fedora-toolbox` can use either toolbox or distrobox. `wolfi-toolbox`, `powershell-toolbox` (WolfiOS base) are currently only compatible with distrobox.
+Inside the quadlets directory are example quadlets each of the toolboxes listed above. Distrobox and Toolbox provide a convenient way to integrate the containers into your host.`ubuntu-toolbox` and `fedora-toolbox` can use either toolbox or distrobox. `wolfi-toolbox`, (WolfiOS base) is currently only compatible with distrobox.
 
 The quadlets mimic the create and enter commands to setup the container. You can use these by copying them to `~/.config/containers/systemd`. When using the Prompt terminal, they will appear in the menu as available containers. The `Exec=` line of the distrobox quadlets can be modified to include additional packages.
 
@@ -43,10 +42,6 @@ Distrobox assemble enables the user to declare a setup without going through the
 To utilize these, place the user service file in `~/.config/systemd/user` and make sure the assemble file is in place. The ones inside the repo are set to replace the existing container of the same to behave similar to the quadlet. Again you can access `.volume` by using the name of the volume unit prepended with `systemd`.
 
 `wolfi-toolbox` has a Wolfi developer variant built from the Wolfi SDK image, intended for Wolfi package and image development. They include utilities such as melange, wolfictl, and apko. This imis labelled as `wolfi-dx-toolbox`.
-
-### PowerShell-Toolbox
-
-`powershell-toolbox` is based on `WolfiOS`. Its primary purpose is to be a dedicated container for Microsoft related technologies used during development. It contains [PowerShell](https://github.com/PowerShell/PowerShell), [Azure CLI](https://github.com/Azure/azure-cli) and [.NET](https://github.com/dotnet/core) (latest LTS) configured out of the box. It also includes a small selection of other useful CLI utilities to improve the overall experience.
 
 ### Incus and Docker Distrobox
 
