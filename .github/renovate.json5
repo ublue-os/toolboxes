@@ -32,7 +32,6 @@
         "ghcr.io/ublue-os/ubuntu-toolbox",
         "ghcr.io/ublue-os/wolfi-toolbox",
         "ghcr.io/ublue-os/arch-toolbox",
-        "ghcr.io/ublue-os/powershell-toolbox",
         "quay.io/toolbx/arch-toolbox",
         "registry.fedoraproject.org/fedora-toolbox"
       ]
