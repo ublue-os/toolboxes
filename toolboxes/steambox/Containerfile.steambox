@@ -1,6 +1,6 @@
-FROM ghcr.io/ublue-os/arch-toolbox@sha256:23b540f5f3d07378a8dce65ef9618d8207212b3307ca48d83ed26c22cf39d291 AS bazzite-arch
+FROM ghcr.io/ublue-os/arch-toolbox@sha256:23b540f5f3d07378a8dce65ef9618d8207212b3307ca48d83ed26c22cf39d291 AS builder
 
-COPY ./toolboxes/bazzite-arch/files /
+COPY ./toolboxes/steambox/files /
 
 # Install needed packages
 RUN pacman -Syu \
@@ -84,7 +84,34 @@ RUN sed -i 's@ (Runtime)@@g' /usr/share/applications/steam.desktop && \
         /tmp/* \
         /var/cache/pacman/pkg/*
 
-FROM bazzite-arch as bazzite-arch-gnome
+# Rechunk
+RUN pacman -Sy --noconfirm attr && \
+    pacman -Qq | while read pkgname; do \
+        echo "Setting file attributes for package: $pkgname (chunkah)"; \
+        pacman -Ql "$pkgname" | awk '{print $2}' | while read filepath; do \
+            if [ -f "$filepath" ]; then \
+                setfattr -n user.component -v "$pkgname" "$filepath" || true; \
+            fi; \
+        done; \
+    done
+
+# https://github.com/coreos/chunkah
+FROM quay.io/jlebon/chunkah AS chunkah
+
+# Rechunk
+ARG SOURCE_DATE_EPOCH
+ENV SOURCE_DATE_EPOCH=${SOURCE_DATE_EPOCH}
+RUN --mount=from=builder,src=/,target=/chunkah,ro \
+    --mount=type=bind,target=/run/src,rw \
+    chunkah build \
+    --prune /etc/pacman.d/gnupg/ \
+    --max-layers 64 \
+    > /run/src/out.ociarchive
+
+# Deploy final chunked image
+FROM oci-archive:out.ociarchive AS steambox
+
+FROM builder as builder-gnome
 
 # Replace KDE portal with GNOME portal, swap included icon theme.
 RUN sed -i 's/-march=native -mtune=native/-march=x86-64 -mtune=generic/g' /etc/makepkg.conf && \
@@ -101,3 +128,29 @@ RUN sed -i 's/-march=native -mtune=native/-march=x86-64 -mtune=generic/g' /etc/m
 RUN sed -i 's/-march=x86-64 -mtune=generic/-march=native -mtune=native/g' /etc/makepkg.conf && \
     rm -rf \
         /tmp/*
+
+# Rechunk
+RUN pacman -Qq | while read pkgname; do \
+        echo "Setting file attributes for package: $pkgname (chunkah)"; \
+        pacman -Ql "$pkgname" | awk '{print $2}' | while read filepath; do \
+            if [ -f "$filepath" ]; then \
+                setfattr -n user.component -v "$pkgname" "$filepath" || true; \
+            fi; \
+        done; \
+    done
+
+# https://github.com/coreos/chunkah
+FROM quay.io/jlebon/chunkah AS chunkah
+
+# Rechunk
+ARG SOURCE_DATE_EPOCH
+ENV SOURCE_DATE_EPOCH=${SOURCE_DATE_EPOCH}
+RUN --mount=from=builder-gnome,src=/,target=/chunkah,ro \
+    --mount=type=bind,target=/run/src,rw \
+    chunkah build \
+    --prune /etc/pacman.d/gnupg/ \
+    --max-layers 64 \
+    > /run/src/out.ociarchive
+
+# Deploy final chunked image
+FROM oci-archive:out.ociarchive AS steambox-gnome
