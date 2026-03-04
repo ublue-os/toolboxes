@@ -1,4 +1,4 @@
-name: Build and Push Bazzite Arch
+name: Build and Push SteamBox
 on:
   pull_request:
   merge_group:
@@ -17,7 +17,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        base_name: [bazzite-arch, bazzite-arch-gnome]
+        base_name: [steambox, steambox-gnome]
         include:
           - is_latest_version: true
             is_stable_version: true
@@ -83,13 +83,17 @@ jobs:
           labels: |
             io.artifacthub.package.readme-url=https://raw.githubusercontent.com/ublue-os/boxkit/main/README.md
 
+      - name: Compute SOURCE_DATE_EPOCH
+        id: epoch
+        run: echo "epoch=$(date -d '${{ github.event.head_commit.timestamp }}' +%s)" >> $GITHUB_OUTPUT
+
       # Build image using Buildah action
       - name: Build Image
         id: build_image
         uses: redhat-actions/buildah-build@7a95fa7ee0f02d552a32753e7414641a04307056 # v2
         with:
           containerfiles: |
-            ./toolboxes/bazzite-arch/Containerfile.bazzite-arch
+            ./toolboxes/steambox/Containerfile.steambox
           image: ${{ env.IMAGE_NAME }}
           tags: |
             ${{ steps.generate-tags.outputs.alias_tags }}
@@ -97,6 +101,9 @@ jobs:
           oci: false
           extra-args: |
             --target=${{ matrix.base_name }} --security-opt=seccomp=unconfined
+            --skip-unused-stages=false
+          build-args: |
+            SOURCE_DATE_EPOCH=${{ steps.epoch.outputs.epoch }}
 
       # Workaround bug where capital letters in your GitHub username make it impossible to push to GHCR.
       # https://github.com/macbre/push-to-ghcr/issues/12
