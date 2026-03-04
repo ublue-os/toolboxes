@@ -14,7 +14,7 @@ Centralized repository of containers designed for Toolbox/Distrobox with batteri
 - `fedora-toolbox` - a Fedora base image
 - `arch-toolbox` - an Arch base image
 - `steambox` - an Arch based image that includes gaming utilities and Steam
-- `steambox-gnome` - Variation of Bazzite-arch for GNOME
+- `steambox-gnome` - Variation of SteamBox for GNOME
 - `wolfi-toolbox` - a WolfiOS base image
 - `docker-distrobox` - an Ubuntu distrobox with Docker-CE. It will export the docker socket to the host.
 - `incus-distrobox` - an Ubuntu distrobox with Incus packages from Zabbly.
