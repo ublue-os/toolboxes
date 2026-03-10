@@ -3,6 +3,8 @@ on:
   pull_request:
   merge_group:
   workflow_dispatch:
+permissions: {}
+
 env:
     IMAGE_NAME: ubuntu-toolbox
     IMAGE_TAGS: latest
