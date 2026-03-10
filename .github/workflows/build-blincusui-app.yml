@@ -2,6 +2,8 @@ name: Build and Push BlincusUI App Toolbox
 on:
   merge_group:
   workflow_dispatch:
+permissions: {}
+
 env:
     IMAGE_NAME: blincusui-distrobox
     IMAGE_TAGS: latest
