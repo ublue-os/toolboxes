@@ -1,23 +1,20 @@
-FROM docker.io/library/ubuntu:24.04@sha256:d1e2e92c075e5ca139d51a140fff46f84315c0fdce203eab2807c7e495eff4f9
-# FROM https://hub.docker.com/_/ubuntu
-
-LABEL com.github.containers.toolbox="true" \
-    name="ubuntu-toolbox" \
-    usage="This image is meant to be used with the toolbox or distrobox command" \
-    summary="A cloud-native terminal experience powered by Ubuntu" \
-    maintainer="jorge.castro@gmail.com"
-
+FROM docker.io/library/ubuntu:24.04@sha256:d1e2e92c075e5ca139d51a140fff46f84315c0fdce203eab2807c7e495eff4f9 AS builder
 COPY ./toolboxes/ubuntu-toolbox/packages.ubuntu /toolbox-packages
 
-RUN rm /etc/apt/apt.conf.d/docker-gzip-indexes /etc/apt/apt.conf.d/docker-no-languages && \
+ARG DEBIAN_FRONTEND=noninteractive
+RUN --mount=type=cache,dst=/var/cache/apt \
+    --mount=type=cache,dst=/var/log \
+    --mount=type=cache,dst=/var/lib/apt \
+    --mount=type=cache,dst=/var/lib/dpkg/updates \
+    --mount=type=tmpfs,dst=/tmp \
+    rm /etc/apt/apt.conf.d/docker-gzip-indexes /etc/apt/apt.conf.d/docker-no-languages && \
     sed -Ei 's/^(hosts:.*)(\<files\>)\s*(.*)/\1\2 myhostname \3/' /etc/nsswitch.conf && \
-    apt-get update && \
-    DEBIAN_FRONTEND=noninteractive apt-get -y install \
-    ubuntu-minimal ubuntu-standard \
-    libnss-myhostname \
-    flatpak-xdg-utils \
-    $(cat toolbox-packages | xargs) && \
-    rm -rd /var/lib/apt/lists/* && \
+    apt-get update -y && \
+    apt-get install -y \
+        ubuntu-minimal ubuntu-standard \
+        libnss-myhostname \
+        flatpak-xdg-utils \
+        $(cat toolbox-packages | xargs) && \
     rm /toolbox-packages && \
     mkdir /usr/share/empty && \
     userdel --remove ubuntu && \
@@ -26,7 +23,37 @@ RUN rm /etc/apt/apt.conf.d/docker-gzip-indexes /etc/apt/apt.conf.d/docker-no-lan
     rm /etc/apt/apt.conf.d/20apt-esm-hook.conf && \
     ln -s /usr/libexec/flatpak-xdg-utils/flatpak-spawn /usr/bin/ && \
     ln -fs /usr/bin/distrobox-host-exec /usr/local/bin/docker && \
-    ln -fs /usr/bin/distrobox-host-exec /usr/local/bin/flatpak && \ 
+    ln -fs /usr/bin/distrobox-host-exec /usr/local/bin/flatpak && \
     ln -fs /usr/bin/distrobox-host-exec /usr/local/bin/podman && \
     ln -fs /usr/bin/distrobox-host-exec /usr/local/bin/rpm-ostree && \
-    echo "ALL ALL = (ALL) NOPASSWD: ALL" >> /etc/sudoers
+    echo "ALL ALL = (ALL) NOPASSWD: ALL" >> /etc/sudoers && \
+    apt-get install -y attr && \
+    dpkg-query -W -f='${Package}\n' | while read pkgname; do \
+        echo "Setting file attributes for package: $pkgname (chunkah)"; \
+        dpkg -L "$pkgname" | while read filepath; do \
+            if [ -f "$filepath" ]; then \
+                setfattr -n user.component -v "$pkgname" "$filepath" || true; \
+            fi; \
+        done; \
+    done && \
+    apt-get remove -y attr
+
+# https://github.com/coreos/chunkah
+FROM quay.io/jlebon/chunkah AS chunkah
+
+# Rechunk
+ARG SOURCE_DATE_EPOCH
+ENV SOURCE_DATE_EPOCH=${SOURCE_DATE_EPOCH}
+RUN --mount=from=builder,src=/,target=/chunkah,ro \
+    --mount=type=bind,target=/run/src,rw \
+    chunkah build \
+    --max-layers 64 \
+    --label=com.github.containers.toolbox=true \
+    --label=name=ubuntu-toolbox \
+    --label=usage="This image is meant to be used with the toolbox or distrobox command" \
+    --label=summary="A cloud-native terminal experience powered by Ubuntu" \
+    --label=maintainer=jorge.castro@gmail.com \
+    > /run/src/out.ociarchive
+
+# Deploy final chunked image
+FROM oci-archive:out.ociarchive

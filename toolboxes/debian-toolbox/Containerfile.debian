@@ -1,29 +1,56 @@
-FROM docker.io/library/debian:trixie@sha256:3615a749858a1cba49b408fb49c37093db813321355a9ab7c1f9f4836341e9db
-# FROM https://hub.docker.com/_/debian
-
-LABEL com.github.containers.toolbox="true" \
-  name="debian-toolbox" \
-  usage="This image is meant to be used with the toolbox or distrobox command" \
-  summary="A cloud-native terminal experience powered by Debian" \
-  maintainer="justin@linux.com"
-
+FROM docker.io/library/debian:trixie@sha256:3615a749858a1cba49b408fb49c37093db813321355a9ab7c1f9f4836341e9db AS builder
 COPY ./toolboxes/debian-toolbox/packages.debian /toolbox-packages
 
-RUN rm /etc/apt/apt.conf.d/docker-gzip-indexes /etc/apt/apt.conf.d/docker-no-languages && \
-  sed -Ei 's/^(hosts:.*)(\<files\>)\s*(.*)/\1\2 myhostname \3/' /etc/nsswitch.conf && \
-  apt-get update && \
-  DEBIAN_FRONTEND=noninteractive apt-get -y install \
-  libnss-myhostname \
-  flatpak-xdg-utils \
-  $(cat toolbox-packages | xargs) && \
-  rm -rd /var/lib/apt/lists/* && \
-  rm /toolbox-packages && \
-  mkdir /usr/share/empty && \
-  curl -sLo /usr/bin/host-spawn https://github.com/1player/host-spawn/releases/download/1.5.0/host-spawn-x86_64 && \
-  chmod +x /usr/bin/host-spawn && \
-  ln -s /usr/libexec/flatpak-xdg-utils/flatpak-spawn /usr/bin/ && \
-  ln -fs /usr/bin/distrobox-host-exec /usr/local/bin/docker && \
-  ln -fs /usr/bin/distrobox-host-exec /usr/local/bin/flatpak && \ 
-  ln -fs /usr/bin/distrobox-host-exec /usr/local/bin/podman && \
-  ln -fs /usr/bin/distrobox-host-exec /usr/local/bin/rpm-ostree && \
-  echo "ALL ALL = (ALL) NOPASSWD: ALL" >> /etc/sudoers
+ARG DEBIAN_FRONTEND=noninteractive
+RUN --mount=type=cache,dst=/var/cache/apt \
+    --mount=type=cache,dst=/var/log \
+    --mount=type=cache,dst=/var/lib/apt \
+    --mount=type=cache,dst=/var/lib/dpkg/updates \
+    --mount=type=tmpfs,dst=/tmp \
+    rm /etc/apt/apt.conf.d/docker-gzip-indexes /etc/apt/apt.conf.d/docker-no-languages && \
+    sed -Ei 's/^(hosts:.*)(\<files\>)\s*(.*)/\1\2 myhostname \3/' /etc/nsswitch.conf && \
+    apt-get update -y && \
+    apt-get install -y \
+      libnss-myhostname \
+      flatpak-xdg-utils \
+      $(cat toolbox-packages | xargs) && \
+    rm /toolbox-packages && \
+    mkdir /usr/share/empty && \
+    curl -sLo /usr/bin/host-spawn https://github.com/1player/host-spawn/releases/download/1.5.0/host-spawn-x86_64 && \
+    chmod +x /usr/bin/host-spawn && \
+    ln -s /usr/libexec/flatpak-xdg-utils/flatpak-spawn /usr/bin/ && \
+    ln -fs /usr/bin/distrobox-host-exec /usr/local/bin/docker && \
+    ln -fs /usr/bin/distrobox-host-exec /usr/local/bin/flatpak && \
+    ln -fs /usr/bin/distrobox-host-exec /usr/local/bin/podman && \
+    ln -fs /usr/bin/distrobox-host-exec /usr/local/bin/rpm-ostree && \
+    echo "ALL ALL = (ALL) NOPASSWD: ALL" >> /etc/sudoers && \
+    apt-get install -y attr && \
+    dpkg-query -W -f='${Package}\n' | while read pkgname; do \
+      echo "Setting file attributes for package: $pkgname (chunkah)"; \
+      dpkg -L "$pkgname" | while read filepath; do \
+        if [ -f "$filepath" ]; then \
+          setfattr -n user.component -v "$pkgname" "$filepath" || true; \
+        fi; \
+      done; \
+    done && \
+    apt-get remove -y attr
+
+# https://github.com/coreos/chunkah
+FROM quay.io/jlebon/chunkah AS chunkah
+
+# Rechunk
+ARG SOURCE_DATE_EPOCH
+ENV SOURCE_DATE_EPOCH=${SOURCE_DATE_EPOCH}
+RUN --mount=from=builder,src=/,target=/chunkah,ro \
+    --mount=type=bind,target=/run/src,rw \
+    chunkah build \
+    --max-layers 64 \
+    --label=com.github.containers.toolbox=true \
+    --label=name=debian-toolbox \
+    --label=usage="This image is meant to be used with the toolbox or distrobox command" \
+    --label=summary="A cloud-native terminal experience powered by Debian" \
+    --label=maintainer=justin@linux.com \
+    > /run/src/out.ociarchive
+
+# Deploy final chunked image
+FROM oci-archive:out.ociarchive

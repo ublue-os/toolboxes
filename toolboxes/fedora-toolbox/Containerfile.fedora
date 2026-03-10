@@ -1,42 +1,49 @@
-FROM registry.fedoraproject.org/fedora-toolbox:43@sha256:9f914a32fce2590a3a718d76ff44308efe23a359bf0de5eaab2dbd9c5c42ba18 AS fedora-toolbox
-
-LABEL com.github.containers.toolbox="true" \
-      usage="This image is meant to be used with the toolbox or distrobox command" \
-      summary="A cloud-native terminal experience powered by Fedora" 
-
-COPY ./toolboxes/fedora-toolbox/packages.fedora /tmp/toolbox-packages
-
-RUN dnf -y upgrade && \
-    dnf -y install $(<tmp/toolbox-packages) && \
-    dnf clean all
+FROM registry.fedoraproject.org/fedora-toolbox:43@sha256:9f914a32fce2590a3a718d76ff44308efe23a359bf0de5eaab2dbd9c5c42ba18 AS builder
+COPY ./toolboxes/fedora-toolbox/packages.fedora /toolbox-packages
 
 # Set up dependencies
-RUN git clone https://github.com/89luca89/distrobox.git --single-branch /tmp/distrobox && \
+RUN --mount=type=cache,dst=/var/cache \
+    --mount=type=cache,dst=/var/log \
+    --mount=type=tmpfs,dst=/tmp \
+    dnf upgrade -y && \
+    dnf install -y \
+        $(cat toolbox-packages | xargs) && \
+    rm /toolbox-packages && \
+    git clone https://github.com/89luca89/distrobox.git --single-branch /tmp/distrobox && \
     cp /tmp/distrobox/distrobox-host-exec /usr/bin/distrobox-host-exec && \
     wget https://github.com/1player/host-spawn/releases/download/$(cat /tmp/distrobox/distrobox-host-exec | grep host_spawn_version= | cut -d "\"" -f 2)/host-spawn-$(uname -m) -O /usr/bin/host-spawn && \
     chmod +x /usr/bin/host-spawn && \
     rm -drf /tmp/distrobox && \
     dnf install -y 'dnf-command(copr)' && \
-    dnf clean all
-
-# Set up cleaner Distrobox integration
-RUN dnf copr enable -y kylegospo/distrobox-utils && \
+    dnf copr enable -y kylegospo/distrobox-utils && \
     dnf install -y \
-    xdg-utils-distrobox \
-    adw-gtk3-theme && \
+    xdg-utils-distrobox && \
     ln -s /usr/bin/distrobox-host-exec /usr/bin/flatpak && \
-    dnf clean all
-
-# Install RPMFusion for hardware accelerated encoding/decoding
-RUN dnf install -y \
-    "https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm" \
-    "https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm" && \
     dnf install -y \
-    intel-media-driver \
-    libva-nvidia-driver && \
+        "https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm" \
+        "https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm" && \
+    dnf install -y \
+        intel-media-driver \
+        libva-nvidia-driver && \
     dnf swap -y mesa-va-drivers mesa-va-drivers-freeworld && \
-    dnf swap -y mesa-vdpau-drivers mesa-vdpau-drivers-freeworld && \
-    dnf clean all
+    dnf swap -y mesa-vdpau-drivers mesa-vdpau-drivers-freeworld
 
-# Cleanup
-RUN rm -rf /tmp/*
+# https://github.com/coreos/chunkah
+FROM quay.io/jlebon/chunkah AS chunkah
+
+# Rechunk
+ARG SOURCE_DATE_EPOCH
+ENV SOURCE_DATE_EPOCH=${SOURCE_DATE_EPOCH}
+RUN --mount=from=builder,src=/,target=/chunkah,ro \
+    --mount=type=bind,target=/run/src,rw \
+    chunkah build \
+    --max-layers 64 \
+    --label=com.github.containers.toolbox=true \
+    --label=name=fedora-toolbox \
+    --label=usage="This image is meant to be used with the toolbox or distrobox command" \
+    --label=summary="A cloud-native terminal experience powered by Fedora" \
+    --label=maintainer=me@kylegospodneti.ch \
+    > /run/src/out.ociarchive
+
+# Deploy final chunked image
+FROM oci-archive:out.ociarchive

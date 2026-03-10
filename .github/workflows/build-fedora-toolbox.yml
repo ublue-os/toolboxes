@@ -42,6 +42,10 @@ jobs:
           labels: |
             io.artifacthub.package.readme-url=https://raw.githubusercontent.com/ublue-os/boxkit/main/README.md
 
+      - name: Compute SOURCE_DATE_EPOCH
+        id: epoch
+        run: echo "epoch=$(date -d '${{ github.event.head_commit.timestamp }}' +%s)" >> $GITHUB_OUTPUT
+
       # Build image using Buildah action
       - name: Build Image
         id: build_image
@@ -53,6 +57,9 @@ jobs:
           tags: ${{ env.IMAGE_TAGS }}
           labels: ${{ steps.meta.outputs.labels }}
           oci: false
+          extra-args: --skip-unused-stages=false
+          build-args: |
+            SOURCE_DATE_EPOCH=${{ steps.epoch.outputs.epoch }}
 
       # Workaround bug where capital letters in your GitHub username make it impossible to push to GHCR.
       # https://github.com/macbre/push-to-ghcr/issues/12
