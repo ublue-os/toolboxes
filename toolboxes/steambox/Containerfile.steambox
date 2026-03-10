@@ -3,7 +3,8 @@ FROM ghcr.io/ublue-os/arch-toolbox@sha256:33d4fa7b315b4e1b7d922d5186e48314d5f719
 COPY ./toolboxes/steambox/files /
 
 # Install needed packages
-RUN pacman -Syu \
+RUN pacman-key --init && \
+    pacman -Syu \
         lib32-vulkan-radeon \
         libva-mesa-driver \
         intel-media-driver \
