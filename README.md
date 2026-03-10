@@ -1,4 +1,5 @@
 # toolboxes
+[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/ublue-os/toolboxes/badge)](https://scorecard.dev/viewer/?uri=github.com/ublue-os/toolboxes)
 
 Centralized repository of containers designed for Toolbox/Distrobox with batteries included. These toolboxes strive for:
 
