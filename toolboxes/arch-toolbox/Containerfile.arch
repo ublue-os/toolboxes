@@ -1,4 +1,8 @@
-FROM quay.io/toolbx/arch-toolbox@sha256:8530000173b7d2a704e8435481559f4ece72cd34bbd59a79308cb3f5bfb7c843 AS builder
+FROM quay.io/toolbx/arch-toolbox@sha256:8530000173b7d2a704e8435481559f4ece72cd34bbd59a79308cb3f5bfb7c843 AS arch-toolbox
+
+LABEL com.github.containers.toolbox="true" \
+      usage="This image is meant to be used with the toolbox or distrobox command" \
+      summary="A cloud-native terminal experience powered by Arch Linux"
 
 # Pacman Initialization
 # Create build user
@@ -92,33 +96,3 @@ RUN sed -i 's@#en_US.UTF-8@en_US.UTF-8@g' /etc/locale.gen && \
     sed -i '/build ALL=(ALL) NOPASSWD: ALL/d' /etc/sudoers && \
     sed -i '/root ALL=(ALL) NOPASSWD: ALL/d' /etc/sudoers && \
     rm -rf /tmp/*
-
-# Rechunk
-RUN pacman -Sy --noconfirm attr && \
-    pacman -Qq | while read pkgname; do \
-        echo "Setting file attributes for package: $pkgname (chunkah)"; \
-        pacman -Ql "$pkgname" | awk '{print $2}' | while read filepath; do \
-            if [ -f "$filepath" ]; then \
-                setfattr -n user.component -v "$pkgname" "$filepath" || true; \
-            fi; \
-        done; \
-    done
-
-# https://github.com/coreos/chunkah
-FROM quay.io/jlebon/chunkah AS chunkah
-
-# Rechunk
-ARG SOURCE_DATE_EPOCH
-ENV SOURCE_DATE_EPOCH=${SOURCE_DATE_EPOCH}
-RUN --mount=from=builder,src=/,target=/chunkah,ro \
-    --mount=type=bind,target=/run/src,rw \
-    chunkah build \
-    --prune /etc/pacman.d/gnupg/ \
-    --max-layers 64 \
-    --label=com.github.containers.toolbox=true \
-    --label=usage="This image is meant to be used with the toolbox or distrobox command" \
-    --label=summary="A cloud-native terminal experience powered by Arch Linux" \
-    > /run/src/out.ociarchive
-
-# Deploy final chunked image
-FROM oci-archive:out.ociarchive AS arch-toolbox
