@@ -1,4 +1,4 @@
-FROM ghcr.io/ublue-os/arch-toolbox@sha256:139c00df1bee9e59d25bd257b96e2bd5867c9cf91fe4b1ecf0aa037ccd8c3c94 AS steambox
+FROM ghcr.io/ublue-os/arch-toolbox@sha256:c42bffd99507ce932834ca123c7cd67ce873e2be2bef65070b45e7463e5d97f4 AS steambox
 
 COPY ./toolboxes/steambox/files /
 
