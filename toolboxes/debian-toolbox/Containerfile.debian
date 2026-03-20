@@ -1,4 +1,4 @@
-FROM docker.io/library/debian:trixie@sha256:55a15a112b42be10bfc8092fcc40b6748dc236f7ef46a358d9392b339e9d60e8 AS builder
+FROM docker.io/library/debian:trixie-20260316@sha256:55a15a112b42be10bfc8092fcc40b6748dc236f7ef46a358d9392b339e9d60e8 AS builder
 COPY ./toolboxes/debian-toolbox/packages.debian /toolbox-packages
 
 ARG DEBIAN_FRONTEND=noninteractive
