@@ -23,8 +23,10 @@ jobs:
         include:
           - is_latest_version: true
             is_stable_version: true
-
     steps:
+      - name: Maximize build space
+        uses: ublue-os/container-storage-action@main
+        
       # Checkout push-to-registry action GitHub repository
       - name: Checkout Push to Registry action
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
