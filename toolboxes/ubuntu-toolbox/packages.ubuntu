@@ -44,7 +44,6 @@ libelf1t64
 libexpat1
 libgbm1
 libgl1
-libgl1-amber-dri
 libgl1-mesa-dri
 libglib2.0-bin
 libglvnd0
