@@ -83,7 +83,7 @@ libxcb1
 libxdmcp6
 libxext6
 libxfixes3
-libxml2
+libxml2-16
 locales
 lsof
 make
