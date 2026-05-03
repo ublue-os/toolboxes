@@ -40,7 +40,7 @@ libdrm2
 libedit2
 libegl-mesa0
 libegl1
-libelf1
+libelf1t64
 libexpat1
 libgbm1
 libgl1
@@ -52,7 +52,6 @@ libglx-mesa0
 libglx0
 libkrb5-3
 libksba8
-libllvm15
 libnpth0
 libnsl2
 libnss-mdns
@@ -64,9 +63,7 @@ libsensors5
 libsqlite3-0
 libtirpc-common
 libtirpc3
-libvte-2.9*-common
 libvte-2.91-common
-libvte-common
 libvulkan1
 libwayland-client0
 libwayland-server0
