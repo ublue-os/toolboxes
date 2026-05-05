@@ -93,7 +93,6 @@ ENV SOURCE_DATE_EPOCH=${SOURCE_DATE_EPOCH}
 RUN --mount=from=builder,src=/,target=/chunkah,ro \
     --mount=type=bind,target=/run/src,rw \
     chunkah build \
-    --prune /etc/pacman.d/gnupg/ \
     --max-layers 64 \
     --label=name=steambox \
     > /run/src/out.ociarchive
@@ -128,7 +127,6 @@ ENV SOURCE_DATE_EPOCH=${SOURCE_DATE_EPOCH}
 RUN --mount=from=builder-gnome,src=/,target=/chunkah,ro \
     --mount=type=bind,target=/run/src,rw \
     chunkah build \
-    --prune /etc/pacman.d/gnupg/ \
     --max-layers 64 \
     --label=name=steambox-gnome \
     > /run/src/out.ociarchive
