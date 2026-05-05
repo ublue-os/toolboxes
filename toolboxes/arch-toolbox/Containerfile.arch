@@ -94,7 +94,7 @@ RUN sed -i 's@#en_US.UTF-8@en_US.UTF-8@g' /etc/locale.gen && \
     rm -rf /tmp/*
 
 # https://github.com/coreos/chunkah
-FROM quay.io/coreos/chunkah AS chunkah
+FROM quay.io/coreos/chunkah:latest AS chunkah
 
 # Rechunk
 ARG SOURCE_DATE_EPOCH

@@ -85,7 +85,7 @@ RUN sed -i 's@ (Runtime)@@g' /usr/share/applications/steam.desktop && \
         /var/cache/pacman/pkg/*
 
 # https://github.com/coreos/chunkah
-FROM quay.io/coreos/chunkah AS chunkah
+FROM quay.io/coreos/chunkah:latest AS chunkah
 
 # Rechunk
 ARG SOURCE_DATE_EPOCH
@@ -120,7 +120,7 @@ RUN sed -i 's/-march=x86-64 -mtune=generic/-march=native -mtune=native/g' /etc/m
         /tmp/*
 
 # https://github.com/coreos/chunkah
-FROM quay.io/coreos/chunkah AS chunkah
+FROM quay.io/coreos/chunkah:latest AS chunkah
 
 # Rechunk
 ARG SOURCE_DATE_EPOCH
