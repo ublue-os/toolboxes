@@ -83,7 +83,7 @@ RUN sed -i 's@ (Runtime)@@g' /usr/share/applications/steam.desktop && \
         /home/build/.cache/*
         /tmp/* \
         /var/cache/pacman/pkg/*
-        /etc/pacman.d/gnupg/S.gpg-agent.extra
+        /etc/pacman.d/gnupg/S.*
 
 # https://github.com/coreos/chunkah
 FROM quay.io/coreos/chunkah:latest AS chunkah
@@ -118,7 +118,7 @@ RUN sed -i 's/-march=native -mtune=native/-march=x86-64 -mtune=generic/g' /etc/m
 RUN sed -i 's/-march=x86-64 -mtune=generic/-march=native -mtune=native/g' /etc/makepkg.conf && \
     rm -rf \
         /tmp/*
-        /etc/pacman.d/gnupg/S.gpg-agent.extra
+        /etc/pacman.d/gnupg/S.*
 
 # https://github.com/coreos/chunkah
 FROM quay.io/coreos/chunkah:latest AS chunkah

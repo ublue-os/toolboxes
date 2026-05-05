@@ -93,7 +93,7 @@ RUN sed -i 's@#en_US.UTF-8@en_US.UTF-8@g' /etc/locale.gen && \
     sed -i '/root ALL=(ALL) NOPASSWD: ALL/d' /etc/sudoers && \
     rm -rf \
         /tmp/* \
-        /etc/pacman.d/gnupg/S.gpg-agent.extra
+        /etc/pacman.d/gnupg/S.*
 
 # https://github.com/coreos/chunkah
 FROM quay.io/coreos/chunkah:latest AS chunkah
