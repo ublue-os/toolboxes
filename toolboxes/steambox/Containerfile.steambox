@@ -1,4 +1,4 @@
-FROM ghcr.io/ublue-os/arch-toolbox@sha256:bb3729060e7f9762ee47d7fd72d3c31b6a85cf4efe29125f99aadfa503325c4c AS steambox
+FROM ghcr.io/ublue-os/arch-toolbox@sha256:bb3729060e7f9762ee47d7fd72d3c31b6a85cf4efe29125f99aadfa503325c4c AS builder
 
 COPY ./toolboxes/steambox/files /
 
@@ -84,7 +84,24 @@ RUN sed -i 's@ (Runtime)@@g' /usr/share/applications/steam.desktop && \
         /tmp/* \
         /var/cache/pacman/pkg/*
 
-FROM steambox as steambox-gnome
+# https://github.com/coreos/chunkah
+FROM quay.io/coreos/chunkah AS chunkah
+
+# Rechunk
+ARG SOURCE_DATE_EPOCH
+ENV SOURCE_DATE_EPOCH=${SOURCE_DATE_EPOCH}
+RUN --mount=from=builder,src=/,target=/chunkah,ro \
+    --mount=type=bind,target=/run/src,rw \
+    chunkah build \
+    --prune /etc/pacman.d/gnupg/ \
+    --max-layers 64 \
+    --label=name=steambox \
+    > /run/src/out.ociarchive
+
+# Deploy final chunked image
+FROM oci-archive:out.ociarchive AS steambox
+
+FROM builder as builder-gnome
 
 # Replace KDE portal with GNOME portal, swap included icon theme.
 RUN sed -i 's/-march=native -mtune=native/-march=x86-64 -mtune=generic/g' /etc/makepkg.conf && \
@@ -101,3 +118,20 @@ RUN sed -i 's/-march=native -mtune=native/-march=x86-64 -mtune=generic/g' /etc/m
 RUN sed -i 's/-march=x86-64 -mtune=generic/-march=native -mtune=native/g' /etc/makepkg.conf && \
     rm -rf \
         /tmp/*
+
+# https://github.com/coreos/chunkah
+FROM quay.io/coreos/chunkah AS chunkah
+
+# Rechunk
+ARG SOURCE_DATE_EPOCH
+ENV SOURCE_DATE_EPOCH=${SOURCE_DATE_EPOCH}
+RUN --mount=from=builder-gnome,src=/,target=/chunkah,ro \
+    --mount=type=bind,target=/run/src,rw \
+    chunkah build \
+    --prune /etc/pacman.d/gnupg/ \
+    --max-layers 64 \
+    --label=name=steambox-gnome \
+    > /run/src/out.ociarchive
+
+# Deploy final chunked image
+FROM oci-archive:out.ociarchive AS steambox-gnome
