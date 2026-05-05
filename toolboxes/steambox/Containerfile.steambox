@@ -80,10 +80,9 @@ RUN sed -i 's@ (Runtime)@@g' /usr/share/applications/steam.desktop && \
     sed -i '/build ALL=(ALL) NOPASSWD: ALL/d' /etc/sudoers && \
     sed -i '/root ALL=(ALL) NOPASSWD: ALL/d' /etc/sudoers && \
     rm -rf \
-        /home/build/.cache/*
+        /home/build/.cache/* \
         /tmp/* \
         /var/cache/pacman/pkg/*
-        /etc/pacman.d/gnupg/S.*
 
 # https://github.com/coreos/chunkah
 FROM quay.io/coreos/chunkah:latest AS chunkah
@@ -94,6 +93,7 @@ ENV SOURCE_DATE_EPOCH=${SOURCE_DATE_EPOCH}
 RUN --mount=from=builder,src=/,target=/chunkah,ro \
     --mount=type=bind,target=/run/src,rw \
     chunkah build \
+    --skip-special-files \
     --max-layers 64 \
     --label=name=steambox \
     > /run/src/out.ociarchive
@@ -118,7 +118,6 @@ RUN sed -i 's/-march=native -mtune=native/-march=x86-64 -mtune=generic/g' /etc/m
 RUN sed -i 's/-march=x86-64 -mtune=generic/-march=native -mtune=native/g' /etc/makepkg.conf && \
     rm -rf \
         /tmp/*
-        /etc/pacman.d/gnupg/S.*
 
 # https://github.com/coreos/chunkah
 FROM quay.io/coreos/chunkah:latest AS chunkah
@@ -129,6 +128,7 @@ ENV SOURCE_DATE_EPOCH=${SOURCE_DATE_EPOCH}
 RUN --mount=from=builder-gnome,src=/,target=/chunkah,ro \
     --mount=type=bind,target=/run/src,rw \
     chunkah build \
+    --skip-special-files \
     --max-layers 64 \
     --label=name=steambox-gnome \
     > /run/src/out.ociarchive
