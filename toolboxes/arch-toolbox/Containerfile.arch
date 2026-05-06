@@ -1,8 +1,4 @@
-FROM quay.io/toolbx/arch-toolbox@sha256:40a85480d3e8c72d9b2a56f8615b66accae502b9d233b3a18266121656467e5d AS arch-toolbox
-
-LABEL com.github.containers.toolbox="true" \
-      usage="This image is meant to be used with the toolbox or distrobox command" \
-      summary="A cloud-native terminal experience powered by Arch Linux"
+FROM quay.io/toolbx/arch-toolbox@sha256:efe730526c9dbd871eccf6e5ae11997cc6f0c3eac708ec1245e777421b9c79eb AS builder
 
 # Pacman Initialization
 # Create build user
@@ -95,4 +91,25 @@ RUN sed -i 's@#en_US.UTF-8@en_US.UTF-8@g' /etc/locale.gen && \
     rm -drf /home/build && \
     sed -i '/build ALL=(ALL) NOPASSWD: ALL/d' /etc/sudoers && \
     sed -i '/root ALL=(ALL) NOPASSWD: ALL/d' /etc/sudoers && \
-    rm -rf /tmp/*
+    rm -rf \
+        /tmp/*
+
+# https://github.com/coreos/chunkah
+FROM quay.io/coreos/chunkah:latest AS chunkah
+
+# Rechunk
+ARG SOURCE_DATE_EPOCH
+ENV SOURCE_DATE_EPOCH=${SOURCE_DATE_EPOCH}
+RUN --mount=from=builder,src=/,target=/chunkah,ro \
+    --mount=type=bind,target=/run/src,rw \
+    chunkah build \
+    --skip-special-files \
+    --max-layers 64 \
+    --label=com.github.containers.toolbox=true \
+    --label=name=arch-toolbox \
+    --label=usage="This image is meant to be used with the toolbox or distrobox command" \
+    --label=summary="A cloud-native terminal experience powered by Arch Linux" \
+    > /run/src/out.ociarchive
+
+# Deploy final chunked image
+FROM oci-archive:out.ociarchive AS arch-toolbox
