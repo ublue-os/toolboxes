@@ -37,6 +37,7 @@ libdrm-nouveau2
 libdrm-radeon1
 libedit2
 libegl-mesa0
+libegl1
 libelf1
 libexpat1
 libgbm1
@@ -61,7 +62,7 @@ libsensors-config
 libsqlite3-0
 libtirpc3
 libtirpc-common
-libvte-2.91-common
+libvte-2.9*-common
 libvte-common
 libvulkan1
 libwayland-client0
