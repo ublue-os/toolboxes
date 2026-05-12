@@ -1,4 +1,4 @@
-FROM quay.io/toolbx/arch-toolbox@sha256:efe730526c9dbd871eccf6e5ae11997cc6f0c3eac708ec1245e777421b9c79eb AS builder
+FROM quay.io/toolbx/arch-toolbox@sha256:92df22cce84bec8538c1406a6fdcd50242da1408e86acf514722a3b0391427d4 AS builder
 
 # Pacman Initialization
 # Create build user
