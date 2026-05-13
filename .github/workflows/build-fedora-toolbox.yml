@@ -1,6 +1,8 @@
 name: Build and Push Fedora Toolbox Image
 on:
   pull_request:
+    paths:
+      - "toolboxes/fedora-toolbox/**"
   merge_group:
   workflow_dispatch:
 permissions: {}

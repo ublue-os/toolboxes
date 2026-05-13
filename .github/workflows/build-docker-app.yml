@@ -1,6 +1,8 @@
 name: Build and Push Docker App Toolbox
 on:
   pull_request:
+    paths:
+      - "apps/docker/**"
   merge_group:
   workflow_dispatch:
 permissions: {}

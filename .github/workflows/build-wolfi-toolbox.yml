@@ -1,6 +1,8 @@
 name: Build and Push Wolfi Toolbox Image
 on:
   pull_request:
+    paths:
+      - "toolboxes/wolfi-toolbox/**"
   merge_group:
   workflow_dispatch:
 permissions: {}

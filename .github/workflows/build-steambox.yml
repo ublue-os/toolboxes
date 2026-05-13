@@ -1,6 +1,8 @@
 name: Build and Push SteamBox
 on:
   pull_request:
+    paths:
+      - "toolboxes/steambox/**"
   merge_group:
   workflow_dispatch:
 permissions: {}
