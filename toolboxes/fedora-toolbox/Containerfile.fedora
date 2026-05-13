@@ -1,4 +1,4 @@
-FROM registry.fedoraproject.org/fedora-toolbox:43@sha256:b6596807c55302a99673f4fd0e15fa78a8b3f22709e6dd5bd4b0f4fdb1d2f67f AS builder
+FROM registry.fedoraproject.org/fedora-toolbox:44@sha256:9a1e86af672cd7b8bb598396ccf9b07ee1d2627b401bfd95d203d2123299ad31 AS builder
 COPY ./toolboxes/fedora-toolbox/packages.fedora /toolbox-packages
 
 # Set up dependencies
@@ -24,9 +24,8 @@ RUN --mount=type=cache,dst=/var/cache \
         "https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm" && \
     dnf install -y \
         intel-media-driver \
-        libva-nvidia-driver && \
-    dnf swap -y mesa-va-drivers mesa-va-drivers-freeworld && \
-    dnf swap -y mesa-vdpau-drivers mesa-vdpau-drivers-freeworld
+        libva-nvidia-driver \
+        mesa-va-drivers-freeworld
 
 # https://github.com/coreos/chunkah
 FROM quay.io/coreos/chunkah:latest AS chunkah
