@@ -30,6 +30,7 @@ RUN pacman -S \
         findutils \
         glibc \
         gnupg \
+        iputils \
         inetutils \
         keyutils \
         less \
