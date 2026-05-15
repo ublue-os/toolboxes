@@ -1,6 +1,8 @@
 name: Build and Push Ubuntu Toolbox Image
 on:
   pull_request:
+    paths:
+      - "toolboxes/ubuntu-toolbox/**"
   merge_group:
   workflow_dispatch:
 permissions: {}

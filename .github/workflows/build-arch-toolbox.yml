@@ -1,6 +1,8 @@
 name: Build and Push Arch Toolbox
 on:
   pull_request:
+    paths:
+      - "toolboxes/arch-toolbox/**"
   merge_group:
   workflow_dispatch:
 permissions: {}

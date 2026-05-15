@@ -1,6 +1,8 @@
 name: Build and Push Incus App Toolbox
 on:
   pull_request:
+    paths:
+      - "apps/incus/**"
   merge_group:
   workflow_dispatch:
 permissions: {}
