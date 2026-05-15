@@ -6,9 +6,9 @@ on:
 permissions: {}
 
 env:
-    IMAGE_NAME: docker-distrobox
-    IMAGE_TAGS: latest
-    IMAGE_REGISTRY: ghcr.io/${{ github.repository_owner }}
+  IMAGE_NAME: docker-distrobox
+  IMAGE_REGISTRY: ghcr.io/${{ github.repository_owner }}
+  DEFAULT_TAG: latest
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
@@ -49,12 +49,14 @@ jobs:
         uses: docker/metadata-action@030e881283bb7a6894de51c315a6bfe6a94e05cf # v6.0.0
         id: meta
         with:
-          images: |
-            ${{ steps.registry_case.outputs.lowercase }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=raw,value=${{ env.DEFAULT_TAG }}
+            type=raw,value=${{ env.DEFAULT_TAG }}.{{date 'YYYYMMDD'}}
+            type=raw,value={{date 'YYYYMMDD'}}
+            type=sha,enable=${{ github.event_name == 'pull_request' }}
+            type=ref,event=pr
           labels: |
             io.artifacthub.package.readme-url=https://raw.githubusercontent.com/ublue-os/boxkit/main/README.md
-          tags: |
-            ${{ env.IMAGE_TAGS }}
 
       # Login to Contaier Registry if not a PR
       - name: Login to GitHub Container Registry
@@ -73,7 +75,7 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           file: ./apps/docker/Containerfile.docker
           labels: ${{ steps.meta.outputs.labels }}
-          tags: ${{  steps.meta.outputs.tags  }}
+          tags: ${{ steps.meta.outputs.tags }}
 
       # Sign container
       - uses: sigstore/cosign-installer@ba7bc0a3fef59531c69a25acd34668d6d3fe6f22 # v4.1.0
@@ -86,9 +88,9 @@ jobs:
         run: |
           echo "${{ env.COSIGN_PRIVATE_KEY }}" > cosign.key
           wc -c cosign.key
-          cosign sign -y --key cosign.key ${{ steps.registry_case.outputs.lowercase }}/${{ env.IMAGE_NAME }}@${TAGS}
+          cosign sign -y --key cosign.key ${{ steps.registry_case.outputs.lowercase }}/${{ env.IMAGE_NAME }}@${DIGEST}
         env:
-          TAGS: ${{ steps.build_image.outputs.digest }}
+          DIGEST: ${{ steps.build_image.outputs.digest }}
           COSIGN_EXPERIMENTAL: false
           COSIGN_PRIVATE_KEY: ${{ secrets.SIGNING_SECRET }}
 
