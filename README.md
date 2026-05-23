@@ -20,7 +20,7 @@ Centralized repository of containers designed for Toolbox/Distrobox with batteri
 - `docker-distrobox` - an Ubuntu distrobox with Docker-CE. It will export the docker socket to the host.
 - `incus-distrobox` - an Ubuntu distrobox with Incus packages from Zabbly.
 
-It is strongly recommended that the [Ptyxis terminal](https://gitlab.gnome.org/chergert/ptyxis) be used with these toolboxes and is the default experience in both [Bazzite](https://bazzite.gg) and [Bluefin](https://projectbluefin.io).
+It is strongly recommended that either [Ptyxis](https://gitlab.gnome.org/chergert/ptyxis) or [Konsole](https://apps.kde.org/konsole/) be used with these toolboxes and is the default experience in [Bazzite](https://bazzite.gg), [Bluefin](https://projectbluefin.io) and [Aurora](https://getaurora.dev).
 
 ### SteamBox Usage
 
