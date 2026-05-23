@@ -21,6 +21,16 @@
       "matchFileNames": [".github/workflows/**.yaml", ".github/workflows/**.yml"],
     },
     {
+      "enabled": false,
+      "matchUpdateTypes": ["patch"],
+      "matchDepNames": ["docker.io/library/debian"]
+    },
+    {
+      "enabled": false,
+      "matchUpdateTypes": ["major"],
+      "matchDepNames": ["registry.fedoraproject.org/fedora-toolbox"]
+    },
+    {
       "automerge": true,
       "groupName": "toolbox-images",
       "matchUpdateTypes": ["digest"],

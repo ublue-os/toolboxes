@@ -2,12 +2,14 @@ dnf5
 bash-completion
 bc
 bzip2
+cracklib-dicts
 curl
 diffutils
 dnf-plugins-core
 findutils
 fish
 glibc-all-langpacks
+glibc-common
 glibc-locale-source
 gnupg2
 gnupg2-smime
@@ -39,8 +41,10 @@ tree
 tzdata
 unzip
 util-linux
+util-linux-script
 vte-profile
 wget
+wget2-wget
 which
 whois
 words

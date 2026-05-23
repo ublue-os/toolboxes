@@ -62,7 +62,7 @@ libsensors5
 libsqlite3-0
 libtirpc-common
 libtirpc3
-libvte-2.91-common
+libvte-2.9*-common
 libvulkan1
 libwayland-client0
 libwayland-server0

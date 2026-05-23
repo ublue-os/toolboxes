@@ -1,5 +1,6 @@
 bash
 bc
+busybox
 bzip2
 coreutils
 curl
@@ -8,6 +9,7 @@ findmnt
 findutils
 git
 gnupg
+gnutar
 gpg
 iproute2
 iputils
@@ -26,15 +28,18 @@ libxmu
 libxt
 linux-pam
 man-db
+mesa
 mount
 ncurses
 ncurses-terminfo
 net-tools
 openssh-client
 pigz
+pinentry
 posix-libc-utils
 procps
 rsync
+script
 shadow
 sudo
 tcpdump
@@ -43,9 +48,10 @@ tzdata
 umount
 unzip
 util-linux
+util-linux-login
 util-linux-misc
+vulkan-loader
 wget
 xauth
 xz
 zip
-vulkan-loader
