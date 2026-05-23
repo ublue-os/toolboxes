@@ -22,6 +22,28 @@ Centralized repository of containers designed for Toolbox/Distrobox with batteri
 
 It is strongly recommended that the [Ptyxis terminal](https://gitlab.gnome.org/chergert/ptyxis) be used with these toolboxes and is the default experience in both [Bazzite](https://bazzite.gg) and [Bluefin](https://projectbluefin.io).
 
+### SteamBox Usage
+
+For Intel and AMD GPUs, the support is baked in, as the containers will install their latest available Mesa/DRI drivers.
+
+> [!NOTE]
+> For the GNOME desktop environment, you may want to replace `ghcr.io/ublue-os/steambox` in the below command with `ghcr.io/ublue-os/steambox-gnome`, which comes with `xdg-desktop-portal-gtk`.
+
+To create a container using SteamBox image, run this command:
+
+```bash
+distrobox-create --unshare-netns --nvidia --image ghcr.io/ublue-os/steambox --name steambox -Y
+```
+
+Once the container has been created, you may optionally export the pre-installed applications to your host operating system using the following commands:
+
+```bash
+distrobox-enter -n steambox -- distrobox-export --app steam
+distrobox-enter -n steambox -- distrobox-export --app lutris
+distrobox-enter -n steambox -- distrobox-export --app protontricks
+distrobox-enter -n steambox -- mkdir -p ~/.steam; distrobox-export --bin /usr/bin/steamcmd --export-path ~/.steam; mv ~/.steam/steamcmd ~/.steam/steamcmd.sh
+```
+
 ## Automatic Toolbox Startup
 
 ### Quadlets
