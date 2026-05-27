@@ -28,7 +28,7 @@
     {
       "enabled": false,
       "matchUpdateTypes": ["major"],
-      "matchDepNames": ["registry.fedoraproject.org/fedora-toolbox"]
+      "matchDepNames": ["quay.io/fedora/fedora-toolbox"]
     },
     {
       "automerge": true,
@@ -43,7 +43,7 @@
         "ghcr.io/ublue-os/wolfi-toolbox",
         "ghcr.io/ublue-os/arch-toolbox",
         "quay.io/toolbx/arch-toolbox",
-        "registry.fedoraproject.org/fedora-toolbox"
+        "quay.io/fedora/fedora-toolbox"
       ]
     }
   ]
