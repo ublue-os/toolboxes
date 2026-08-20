@@ -1,4 +1,4 @@
-FROM quay.io/fedora/fedora-toolbox:44@sha256:397d7d17cbbdc1dcc382233f4ba0b430f2562cad733fafbadd263d81efae0245 AS builder
+FROM quay.io/fedora/fedora-toolbox:44@sha256:873b8958a40c7ebf2e76197b77c6a3aa2a45276ea90596cd2fbcdcbe1daa1aaa AS builder
 COPY ./toolboxes/fedora-toolbox/packages.fedora /toolbox-packages
 
 # Set up dependencies
