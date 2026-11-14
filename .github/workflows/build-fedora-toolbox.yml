@@ -1,8 +1,8 @@
 name: Build and Push Fedora Toolbox Image
 on:
   pull_request:
-    paths-ignore:
-      - "**.md"
+  push:
+    branches: [main]
   merge_group:
   workflow_dispatch:
 permissions: {}
@@ -17,7 +17,17 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  changes:
+    uses: ./.github/workflows/image-changes.yml
+    permissions:
+      contents: read
+    with:
+      image-path: toolboxes/fedora-toolbox
+      workflow-path: .github/workflows/build-fedora-toolbox.yml
+
   push-ghcr:
+    needs: changes
+    if: needs.changes.outputs.changed == 'true'
     name: Build and push image
     runs-on: ubuntu-24.04
     permissions:
@@ -30,6 +40,9 @@ jobs:
       # Checkout push-to-registry action GitHub repository
       - name: Checkout Push to Registry action
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Read base image tag
+        run: bash .github/scripts/prepare-base-image.sh toolboxes/fedora-toolbox/image-version.yaml
 
       - name: Verify Fedora distrobox
         uses: EyeCantCU/cosign-action/verify@58722a084c82190b57863002d494c91eabbe9e79 # v0.3.0
@@ -48,7 +61,7 @@ jobs:
 
       - name: Compute SOURCE_DATE_EPOCH
         id: epoch
-        run: echo "epoch=$(date -d '${{ github.event.head_commit.timestamp }}' +%s)" >> $GITHUB_OUTPUT
+        run: echo "epoch=$(git log -1 --format=%ct)" >> "$GITHUB_OUTPUT"
 
       # Build image using Buildah action
       - name: Build Image
@@ -63,6 +76,7 @@ jobs:
           oci: false
           extra-args: --skip-unused-stages=false
           build-args: |
+            BASE_IMAGE=${{ env.BASE_IMAGE }}
             SOURCE_DATE_EPOCH=${{ steps.epoch.outputs.epoch }}
 
       # Workaround bug where capital letters in your GitHub username make it impossible to push to GHCR.
@@ -76,7 +90,7 @@ jobs:
       # Push the image to GHCR (Image Registry)
       - name: Push To GHCR
         uses: redhat-actions/push-to-registry@5ed88d269cf581ea9ef6dd6806d01562096bee9c # v2
-        if: github.event_name != 'pull_request'
+        if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
         id: push
         env:
           REGISTRY_USER: ${{ github.actor }}
@@ -92,7 +106,7 @@ jobs:
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@650006c6eb7dba73a995cc03b0b2d7f5ca915bee # v4.2.0
-        if: github.event_name != 'pull_request'
+        if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -100,12 +114,12 @@ jobs:
 
       # Sign container
       - uses: sigstore/cosign-installer@ba7bc0a3fef59531c69a25acd34668d6d3fe6f22 # v4.1.0
-        if: github.event_name != 'pull_request'
+        if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
         with:
           cosign-release: "v2.6.1"
 
       - name: Sign container image
-        if: github.event_name != 'pull_request'
+        if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
         run: |
           echo "${{ env.COSIGN_PRIVATE_KEY }}" > cosign.key
           wc -c cosign.key

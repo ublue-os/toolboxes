@@ -1,8 +1,8 @@
 name: Build and Push SteamBox
 on:
   pull_request:
-    paths-ignore:
-      - "**.md"
+  push:
+    branches: [main]
   merge_group:
   workflow_dispatch:
 permissions: {}
@@ -11,7 +11,17 @@ env:
     IMAGE_REGISTRY: ghcr.io/${{ github.repository_owner }}
 
 jobs:
+  changes:
+    uses: ./.github/workflows/image-changes.yml
+    permissions:
+      contents: read
+    with:
+      image-path: toolboxes/steambox
+      workflow-path: .github/workflows/build-steambox.yml
+
   push-ghcr:
+    needs: changes
+    if: needs.changes.outputs.changed == 'true'
     name: Build and push image
     runs-on: ubuntu-24.04
     permissions:
@@ -32,6 +42,9 @@ jobs:
       # Checkout push-to-registry action GitHub repository
       - name: Checkout Push to Registry action
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Read base image tag
+        run: bash .github/scripts/prepare-base-image.sh toolboxes/steambox/image-version.yaml
 
       - name: Matrix Variables
         run: |
@@ -89,7 +102,7 @@ jobs:
 
       - name: Compute SOURCE_DATE_EPOCH
         id: epoch
-        run: echo "epoch=$(date -d '${{ github.event.head_commit.timestamp }}' +%s)" >> $GITHUB_OUTPUT
+        run: echo "epoch=$(git log -1 --format=%ct)" >> "$GITHUB_OUTPUT"
 
       # Build image using Buildah action
       - name: Build Image
@@ -107,6 +120,7 @@ jobs:
             --target=${{ matrix.base_name }} --security-opt=seccomp=unconfined
             --skip-unused-stages=false
           build-args: |
+            BASE_IMAGE=${{ env.BASE_IMAGE }}
             SOURCE_DATE_EPOCH=${{ steps.epoch.outputs.epoch }}
 
       # Workaround bug where capital letters in your GitHub username make it impossible to push to GHCR.
@@ -121,7 +135,7 @@ jobs:
       - name: Push To GHCR
         uses: redhat-actions/push-to-registry@5ed88d269cf581ea9ef6dd6806d01562096bee9c # v2
         id: push
-        if: github.event_name != 'pull_request'
+        if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
         env:
           REGISTRY_USER: ${{ github.actor }}
           REGISTRY_PASSWORD: ${{ github.token }}
@@ -137,7 +151,7 @@ jobs:
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@650006c6eb7dba73a995cc03b0b2d7f5ca915bee # v4.2.0
-        if: github.event_name != 'pull_request'
+        if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -145,12 +159,12 @@ jobs:
 
       # Sign container
       - uses: sigstore/cosign-installer@ba7bc0a3fef59531c69a25acd34668d6d3fe6f22 # v4.1.0
-        if: github.event_name != 'pull_request'
+        if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
         with:
           cosign-release: "v2.6.1"
 
       - name: Sign container image
-        if: github.event_name != 'pull_request'
+        if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
         run: |
           cosign sign -y --key env://COSIGN_PRIVATE_KEY ${{ steps.registry_case.outputs.lowercase }}/${{ env.IMAGE_NAME }}@${TAGS}
         env:
@@ -159,6 +173,6 @@ jobs:
           COSIGN_PRIVATE_KEY: ${{ secrets.SIGNING_SECRET }}
 
       - name: Echo outputs
-        if: github.event_name != 'pull_request'
+        if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
         run: |
           echo "${{ toJSON(steps.push.outputs) }}"

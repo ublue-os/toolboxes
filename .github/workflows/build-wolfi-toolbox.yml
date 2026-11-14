@@ -1,8 +1,8 @@
 name: Build and Push Wolfi Toolbox Image
 on:
   pull_request:
-    paths-ignore:
-      - "**.md"
+  push:
+    branches: [main]
   merge_group:
   workflow_dispatch:
 permissions: {}
@@ -16,7 +16,17 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  changes:
+    uses: ./.github/workflows/image-changes.yml
+    permissions:
+      contents: read
+    with:
+      image-path: toolboxes/wolfi-toolbox
+      workflow-path: .github/workflows/build-wolfi-toolbox.yml
+
   push-ghcr:
+    needs: changes
+    if: needs.changes.outputs.changed == 'true'
     name: Build and push image
     runs-on: ubuntu-24.04
     permissions:
@@ -31,6 +41,9 @@ jobs:
       # Checkout push-to-registry action GitHub repository
       - name: Checkout Push to Registry action
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Read base image tag
+        run: bash .github/scripts/prepare-base-image.sh toolboxes/wolfi-toolbox/image-version.yaml
 
       - name: Verify base image
         uses: EyeCantCU/cosign-action/verify@58722a084c82190b57863002d494c91eabbe9e79 # v0.3.0
@@ -65,6 +78,7 @@ jobs:
           image: ${{ matrix.image_name }}
           tags: ${{ env.IMAGE_TAGS }}
           build-args: |
+            BASE_IMAGE=${{ env.BASE_IMAGE }}
             IMAGE_NAME=${{ matrix.image_name }}
           labels: ${{ steps.meta.outputs.labels }}
           oci: false
@@ -80,7 +94,7 @@ jobs:
       # Push the image to GHCR (Image Registry)
       - name: Push To GHCR
         uses: redhat-actions/push-to-registry@5ed88d269cf581ea9ef6dd6806d01562096bee9c # v2
-        if: github.event_name != 'pull_request'
+        if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
         id: push
         env:
           REGISTRY_USER: ${{ github.actor }}
@@ -96,7 +110,7 @@ jobs:
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@650006c6eb7dba73a995cc03b0b2d7f5ca915bee # v4.2.0
-        if: github.event_name != 'pull_request'
+        if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -104,12 +118,12 @@ jobs:
 
       # Sign container
       - uses: sigstore/cosign-installer@ba7bc0a3fef59531c69a25acd34668d6d3fe6f22 # v4.1.0
-        if: github.event_name != 'pull_request'
+        if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
         with:
           cosign-release: "v2.6.1"
 
       - name: Sign container image
-        if: github.event_name != 'pull_request'
+        if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
         run: |
           echo "${{ env.COSIGN_PRIVATE_KEY }}" > cosign.key
           wc -c cosign.key

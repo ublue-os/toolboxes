@@ -1,4 +1,5 @@
-FROM cgr.dev/chainguard/wolfi-base:latest@sha256:7cf549564f3bd462c7c38b099dfd2883a9d85c1f0b1643a803aaf9ca5ed0d088
+ARG BASE_IMAGE=cgr.dev/chainguard/wolfi-base:latest
+FROM ${BASE_IMAGE}
 # Thanks to Nuno do Carmo for the initial prototype
 
 LABEL com.github.containers.toolbox="true" \

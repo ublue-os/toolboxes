@@ -3,48 +3,86 @@
   "extends": [
     "config:best-practices"
   ],
-
   "rebaseWhen": "never",
   "schedule": [
     "* 0 * * *"
   ],
-
   "packageRules": [
     {
       "automerge": true,
-      "matchUpdateTypes": ["pin", "pinDigest"]
+      "matchUpdateTypes": [
+        "pin",
+        "pinDigest"
+      ]
     },
     {
       "enabled": false,
-      "matchUpdateTypes": ["digest", "pinDigest", "pin"],
-      "matchDepTypes": ["container"],
-      "matchFileNames": [".github/workflows/**.yaml", ".github/workflows/**.yml"],
+      "matchUpdateTypes": [
+        "digest",
+        "pinDigest",
+        "pin"
+      ],
+      "matchDepTypes": [
+        "container"
+      ],
+      "matchFileNames": [
+        ".github/workflows/**.yaml",
+        ".github/workflows/**.yml"
+      ]
     },
     {
       "enabled": false,
-      "matchUpdateTypes": ["patch"],
-      "matchDepNames": ["docker.io/library/debian"]
-    },
-    {
-      "enabled": false,
-      "matchUpdateTypes": ["major"],
-      "matchDepNames": ["quay.io/fedora/fedora-toolbox"]
-    },
-    {
-      "automerge": true,
-      "groupName": "toolbox-images",
-      "matchUpdateTypes": ["digest"],
+      "matchUpdateTypes": [
+        "patch"
+      ],
       "matchDepNames": [
-        "cgr.dev/chainguard/wolfi-base",
-        "docker.io/library/debian",
-        "docker.io/library/ubuntu",
-        "ghcr.io/ublue-os/fedora-toolbox",
-        "ghcr.io/ublue-os/ubuntu-toolbox",
-        "ghcr.io/ublue-os/wolfi-toolbox",
-        "ghcr.io/ublue-os/arch-toolbox",
-        "quay.io/toolbx/arch-toolbox",
+        "docker.io/library/debian"
+      ]
+    },
+    {
+      "enabled": false,
+      "matchUpdateTypes": [
+        "major"
+      ],
+      "matchDepNames": [
         "quay.io/fedora/fedora-toolbox"
       ]
+    },
+    {
+      "matchManagers": [
+        "dockerfile"
+      ],
+      "pinDigests": false
+    },
+    {
+      "matchFileNames": [
+        "**/image-version.yaml",
+        "**/Containerfile.*"
+      ],
+      "groupName": null,
+      "additionalBranchPrefix": "{{parentDir}}-"
+    },
+    {
+      "matchFileNames": [
+        "**/image-version.yaml"
+      ],
+      "matchUpdateTypes": [
+        "digest"
+      ],
+      "automerge": true
+    }
+  ],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/(^|/)image-version\\.yaml$/"
+      ],
+      "matchStrings": [
+        "image: (?<depName>[^\\s@]+):(?<currentValue>[^\\s@]+)@(?<currentDigest>sha256:[a-f0-9]{64})"
+      ],
+      "datasourceTemplate": "docker",
+      "versioningTemplate": "docker"
     }
   ]
 }
