@@ -5,77 +5,44 @@ repo=$(git rev-parse --show-toplevel)
 tmp=$(mktemp -d)
 trap 'rm -rf "$tmp"' EXIT
 
-# Every recorded digest must be stripped before it reaches a builder.
+# Exercise the actual workflow commands: digest updates must keep pulling the
+# tag, while tag updates must change the build input without editing a Containerfile.
 while IFS= read -r metadata; do
-    : > "$tmp/env"
-    GITHUB_ENV="$tmp/env" bash "$repo/.github/scripts/prepare-base-image.sh" "$metadata"
-    expected=$(sed -n 's/^image: \([^@]*\)@.*/BASE_IMAGE=\1/p' "$metadata")
-    [[ $(cat "$tmp/env") == "$expected" ]]
-done < <(find "$repo/toolboxes" "$repo/apps" -name image-version.yaml)
+    directory=${metadata%/*}
+    name=${directory##*/}
+    [[ "$directory" != apps/* ]] || name="$name-app"
+    workflow="$repo/.github/workflows/build-$name.yml"
+    image=$(yq -r '.image' "$repo/$metadata")
+    [[ "$image" =~ ^[^[:space:]@]+:[^[:space:]@]+@sha256:[a-f0-9]{64}$ ]]
+    grep -qx 'ARG BASE_IMAGE' "$repo/$directory/Containerfile."*
+    read_step=$(yq -r '.jobs.push-ghcr.steps[] | select(.name == "Read base image tag") | .run' "$workflow")
+    [[ -n "$read_step" ]]
+    mkdir -p "$tmp/$directory"
+    for reference in \
+        "test.invalid/base:1@sha256:$(printf 'a%.0s' {1..64})" \
+        "test.invalid/base:1@sha256:$(printf 'b%.0s' {1..64})" \
+        "test.invalid/base:2@sha256:$(printf 'b%.0s' {1..64})"; do
+        printf 'image: %s\n' "$reference" > "$tmp/$metadata"
+        : > "$tmp/env"
+        (cd "$tmp"; GITHUB_ENV="$tmp/env" bash -e -c "$read_step")
+        grep -Fxq "BASE_IMAGE=${reference%@*}" "$tmp/env"
+        if [[ "$name" == fedora-toolbox ]]; then
+            tag=${reference%@*}
+            grep -Fxq "IMAGE_TAGS=${tag##*:} latest" "$tmp/env"
+        fi
+    done
+    for event in pull_request push; do
+        yq -e ".on.$event.paths | contains([\"$directory/**\", \".github/workflows/build-$name.yml\"])" "$workflow" >/dev/null
+    done
+done < <(cd "$repo"; find toolboxes apps -name image-version.yaml | sort)
 
-# Malformed metadata must fail without writing environment variables.
-for image in 'image: example:latest' 'image: example:latest@sha256:invalid' \
-    $'image: example:latest@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\nimage: other:latest'; do
-    printf '%s\n' "$image" > "$tmp/invalid.yaml"
-    : > "$tmp/env"
-    if GITHUB_ENV="$tmp/env" bash "$repo/.github/scripts/prepare-base-image.sh" "$tmp/invalid.yaml" 2>/dev/null; then
-        echo 'Malformed metadata was accepted' >&2
-        exit 1
-    fi
-    [[ ! -s "$tmp/env" ]]
+# Downstream images must still be checked for changes to their parent toolbox.
+for pair in 'steambox arch-toolbox' 'docker-app ubuntu-toolbox' 'incus-app ubuntu-toolbox'; do
+    read -r child parent <<< "$pair"
+    for event in pull_request push; do
+        yq -e ".on.$event.paths | contains([\"toolboxes/$parent/**\", \".github/workflows/build-$parent.yml\"])" \
+            "$repo/.github/workflows/build-$child.yml" >/dev/null
+    done
 done
-
-# Use real commits to exercise the same diff as PRs, merge groups and pushes.
-git init -q "$tmp/repo"
-cd "$tmp/repo"
-git config user.name 'Image update tests'
-git config user.email 'test@example.com'
-git -c commit.gpgsign=false commit -q --allow-empty -m base
-base=$(git rev-parse HEAD)
-
-check_change() {
-    local expected=$1
-    local compare_base=$2
-    : > "$tmp/output"
-    BASE_SHA="$compare_base" GITHUB_SHA=HEAD IMAGE_PATH=toolboxes/ubuntu-toolbox \
-        WORKFLOW_PATH=.github/workflows/build-ubuntu-toolbox.yml \
-        GITHUB_OUTPUT="$tmp/output" bash "$repo/.github/scripts/image-changed.sh" || return $?
-    if [[ $(cat "$tmp/output") != "changed=$expected" ]]; then
-        echo "Expected changed=$expected for base '$compare_base'" >&2
-        exit 1
-    fi
-}
-
-commit_file() {
-    mkdir -p "$(dirname "$1")"
-    echo change >> "$1"
-    git add "$1"
-    git -c commit.gpgsign=false commit -qm "Change $1"
-}
-
-check_change true ''
-check_change true 0000000000000000000000000000000000000000
-check_change false "$base"
-commit_file toolboxes/arch-toolbox/image-version.yaml
-check_change false "$base"
-commit_file README.md
-check_change false "$base"
-commit_file toolboxes/ubuntu-toolbox/image-version.yaml
-check_change true "$base"
-base=$(git rev-parse HEAD)
-commit_file .github/workflows/build-ubuntu-toolbox.yml
-check_change true "$base"
-base=$(git rev-parse HEAD)
-commit_file .github/scripts/prepare-base-image.sh
-check_change true "$base"
-base=$(git rev-parse HEAD)
-commit_file .github/workflows/image-changes.yml
-check_change true "$base"
-
-# Git errors must fail the check instead of silently skipping a build.
-if check_change true invalid-ref 2>/dev/null; then
-    echo 'An invalid comparison commit was accepted' >&2
-    exit 1
-fi
 
 echo 'Image update checks passed'

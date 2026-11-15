@@ -1,4 +1,4 @@
-ARG BASE_IMAGE=quay.io/toolbx/arch-toolbox:latest
+ARG BASE_IMAGE
 FROM ${BASE_IMAGE} AS builder
 
 # Pacman Initialization

@@ -1,4 +1,4 @@
-ARG BASE_IMAGE=cgr.dev/chainguard/wolfi-base:latest
+ARG BASE_IMAGE
 FROM ${BASE_IMAGE}
 # Thanks to Nuno do Carmo for the initial prototype
 

@@ -1,4 +1,4 @@
-ARG BASE_IMAGE=docker.io/library/ubuntu:26.04
+ARG BASE_IMAGE
 FROM ${BASE_IMAGE} AS builder
 COPY ./toolboxes/ubuntu-toolbox/packages.ubuntu /toolbox-packages
 

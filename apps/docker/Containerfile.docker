@@ -1,4 +1,4 @@
-ARG BASE_IMAGE=ghcr.io/ublue-os/ubuntu-toolbox:latest
+ARG BASE_IMAGE
 FROM ${BASE_IMAGE}
 
 RUN <<EOF

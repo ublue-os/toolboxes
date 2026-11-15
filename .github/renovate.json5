@@ -3,81 +3,48 @@
   "extends": [
     "config:best-practices"
   ],
+
   "rebaseWhen": "never",
   "schedule": [
     "* 0 * * *"
   ],
+
   "packageRules": [
     {
       "automerge": true,
-      "matchUpdateTypes": [
-        "pin",
-        "pinDigest"
-      ]
+      "matchUpdateTypes": ["pin", "pinDigest"]
     },
     {
       "enabled": false,
-      "matchUpdateTypes": [
-        "digest",
-        "pinDigest",
-        "pin"
-      ],
-      "matchDepTypes": [
-        "container"
-      ],
-      "matchFileNames": [
-        ".github/workflows/**.yaml",
-        ".github/workflows/**.yml"
-      ]
+      "matchUpdateTypes": ["digest", "pinDigest", "pin"],
+      "matchDepTypes": ["container"],
+      "matchFileNames": [".github/workflows/**.yaml", ".github/workflows/**.yml"],
     },
     {
       "enabled": false,
-      "matchUpdateTypes": [
-        "patch"
-      ],
-      "matchDepNames": [
-        "docker.io/library/debian"
-      ]
+      "matchUpdateTypes": ["patch"],
+      "matchDepNames": ["docker.io/library/debian"]
     },
     {
       "enabled": false,
-      "matchUpdateTypes": [
-        "major"
-      ],
-      "matchDepNames": [
-        "quay.io/fedora/fedora-toolbox"
-      ]
+      "matchUpdateTypes": ["major"],
+      "matchDepNames": ["quay.io/fedora/fedora-toolbox"]
     },
     {
-      "matchManagers": [
-        "dockerfile"
-      ],
-      "pinDigests": false
-    },
-    {
-      "matchFileNames": [
-        "**/image-version.yaml",
-        "**/Containerfile.*"
-      ],
+      "matchFileNames": ["**/image-version.yaml"],
       "groupName": null,
       "additionalBranchPrefix": "{{parentDir}}-"
     },
     {
-      "matchFileNames": [
-        "**/image-version.yaml"
-      ],
-      "matchUpdateTypes": [
-        "digest"
-      ],
-      "automerge": true
+      "automerge": true,
+      "matchUpdateTypes": ["digest"],
+      "matchFileNames": ["**/image-version.yaml"]
     }
   ],
   "customManagers": [
     {
       "customType": "regex",
-      "managerFilePatterns": [
-        "/(^|/)image-version\\.yaml$/"
-      ],
+      "managerFilePatterns": ["/(^|/)image-version\\.yaml$/"],
       "matchStrings": [
         "image: (?<depName>[^\\s@]+):(?<currentValue>[^\\s@]+)@(?<currentDigest>sha256:[a-f0-9]{64})"
       ],

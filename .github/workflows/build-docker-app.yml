@@ -1,8 +1,18 @@
 name: Build and Push Docker App Toolbox
 on:
   pull_request:
+    paths:
+      - "apps/docker/**"
+      - "toolboxes/ubuntu-toolbox/**"
+      - ".github/workflows/build-ubuntu-toolbox.yml"
+      - ".github/workflows/build-docker-app.yml"
   push:
     branches: [main]
+    paths:
+      - "apps/docker/**"
+      - "toolboxes/ubuntu-toolbox/**"
+      - ".github/workflows/build-ubuntu-toolbox.yml"
+      - ".github/workflows/build-docker-app.yml"
   merge_group:
   workflow_dispatch:
 permissions: {}
@@ -12,23 +22,14 @@ env:
     IMAGE_TAGS: latest
     IMAGE_REGISTRY: ghcr.io/${{ github.repository_owner }}
 
-jobs:
-  changes:
-    uses: ./.github/workflows/image-changes.yml
-    permissions:
-      contents: read
-    with:
-      image-path: apps/docker
-      workflow-path: .github/workflows/build-docker-app.yml
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
+  cancel-in-progress: true
 
+jobs:
   push-ghcr:
-    needs: changes
-    if: needs.changes.outputs.changed == 'true'
     name: Build and push image
     runs-on: ubuntu-24.04
-    concurrency:
-      group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
-      cancel-in-progress: true
     permissions:
       contents: read
       packages: write
@@ -41,7 +42,7 @@ jobs:
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Read base image tag
-        run: bash .github/scripts/prepare-base-image.sh apps/docker/image-version.yaml
+        run: echo "BASE_IMAGE=$(yq -r '.image | split("@")[0]' apps/docker/image-version.yaml)" >> "$GITHUB_ENV"
 
       - name: Verify Ublue-OS Ubuntu toolbox
         uses: EyeCantCU/cosign-action/verify@58722a084c82190b57863002d494c91eabbe9e79 # v0.3.0
@@ -73,7 +74,7 @@ jobs:
       # Login to Contaier Registry if not a PR
       - name: Login to GitHub Container Registry
         uses: docker/login-action@650006c6eb7dba73a995cc03b0b2d7f5ca915bee # v4.2.0
-        if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+        if: github.event_name != 'pull_request'
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -84,23 +85,21 @@ jobs:
         id: build_image
         uses: docker/build-push-action@f9f3042f7e2789586610d6e8b85c8f03e5195baf # v7.2.0
         with:
-          context: .
           build-args: |
             BASE_IMAGE=${{ env.BASE_IMAGE }}
-          pull: true
-          push: ${{ (github.event_name == 'push' || github.event_name == 'workflow_dispatch') }}
+          push: ${{ github.event_name != 'pull_request' }}
           file: ./apps/docker/Containerfile.docker
           labels: ${{ steps.meta.outputs.labels }}
           tags: ${{  steps.meta.outputs.tags  }}
 
       # Sign container
       - uses: sigstore/cosign-installer@ba7bc0a3fef59531c69a25acd34668d6d3fe6f22 # v4.1.0
-        if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+        if: github.event_name != 'pull_request'
         with:
           cosign-release: "v2.6.1"
 
       - name: Sign container image
-        if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+        if: github.event_name != 'pull_request'
         run: |
           echo "${{ env.COSIGN_PRIVATE_KEY }}" > cosign.key
           wc -c cosign.key

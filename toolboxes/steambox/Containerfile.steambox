@@ -1,4 +1,4 @@
-ARG BASE_IMAGE=ghcr.io/ublue-os/arch-toolbox:latest
+ARG BASE_IMAGE
 ARG IMAGE_NAME=steambox
 FROM ${BASE_IMAGE} AS builder
 ARG IMAGE_NAME

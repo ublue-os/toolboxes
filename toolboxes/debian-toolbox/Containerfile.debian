@@ -1,4 +1,4 @@
-ARG BASE_IMAGE=docker.io/library/debian:trixie
+ARG BASE_IMAGE
 FROM ${BASE_IMAGE} AS builder
 COPY ./toolboxes/debian-toolbox/packages.debian /toolbox-packages
 
