@@ -1,2 +1,2 @@
 # Renovate tracks this digest to trigger rebuilds; builds pull the tag instead.
-image: quay.io/fedora/fedora-toolbox:44@sha256:397d7d17cbbdc1dcc382233f4ba0b430f2562cad733fafbadd263d81efae0245
+image: quay.io/fedora/fedora-toolbox:45@sha256:c786099a741b822eeafeeca9154b617e05459ed30dc5c15d7f2979a28ba888b6

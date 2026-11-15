@@ -9,12 +9,8 @@ permissions: {}
 
 env:
     IMAGE_NAME: fedora-toolbox
-    IMAGE_TAGS: latest
+    IMAGE_TAGS: 45 latest
     IMAGE_REGISTRY: ghcr.io/${{ github.repository_owner }}
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
-  cancel-in-progress: true
 
 jobs:
   changes:
@@ -30,6 +26,9 @@ jobs:
     if: needs.changes.outputs.changed == 'true'
     name: Build and push image
     runs-on: ubuntu-24.04
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
+      cancel-in-progress: true
     permissions:
       contents: read
       packages: write

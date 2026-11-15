@@ -24,6 +24,9 @@ jobs:
     if: needs.changes.outputs.changed == 'true'
     name: Build and push image
     runs-on: ubuntu-24.04
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref || github.run_id }}-${{ matrix.base_name }}
+      cancel-in-progress: true
     permissions:
       contents: read
       packages: write
@@ -36,7 +39,12 @@ jobs:
           - is_latest_version: true
             is_stable_version: true
     steps:
-      - name: Maximize build space
+      - name: Free runner disk space
+        uses: ublue-os/remove-unwanted-software@695eb75bc387dbcd9685a8e72d23439d8686cba6 # v10
+        with:
+          extra-squeeze: true
+
+      - name: Configure container storage
         uses: ublue-os/container-storage-action@dc1f4c8f17b672069e921f001132f7cf98a423a6
 
       # Checkout push-to-registry action GitHub repository
@@ -117,11 +125,15 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           oci: false
           extra-args: |
-            --target=${{ matrix.base_name }} --security-opt=seccomp=unconfined
+            --security-opt=seccomp=unconfined
             --skip-unused-stages=false
           build-args: |
             BASE_IMAGE=${{ env.BASE_IMAGE }}
+            IMAGE_NAME=${{ matrix.base_name }}
             SOURCE_DATE_EPOCH=${{ steps.epoch.outputs.epoch }}
+
+      - name: Remove exported archive
+        run: rm -f out.ociarchive
 
       # Workaround bug where capital letters in your GitHub username make it impossible to push to GHCR.
       # https://github.com/macbre/push-to-ghcr/issues/12

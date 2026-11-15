@@ -1,4 +1,4 @@
-ARG BASE_IMAGE=quay.io/fedora/fedora-toolbox:44
+ARG BASE_IMAGE=quay.io/fedora/fedora-toolbox:45
 FROM ${BASE_IMAGE} AS builder
 COPY ./toolboxes/fedora-toolbox/packages.fedora /toolbox-packages
 
@@ -13,7 +13,7 @@ RUN --mount=type=cache,dst=/var/cache \
     dnf install -y \
         $(cat toolbox-packages | xargs) && \
     rm /toolbox-packages && \
-    git clone https://github.com/89luca89/distrobox.git --single-branch /tmp/distrobox && \
+    git clone https://github.com/89luca89/distrobox.git --branch 1.8.2.5 --depth 1 /tmp/distrobox && \
     cp /tmp/distrobox/distrobox-host-exec /usr/bin/distrobox-host-exec && \
     wget https://github.com/1player/host-spawn/releases/download/$(cat /tmp/distrobox/distrobox-host-exec | grep host_spawn_version= | cut -d "\"" -f 2)/host-spawn-$(uname -m) -O /usr/bin/host-spawn && \
     chmod +x /usr/bin/host-spawn && \

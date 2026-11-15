@@ -14,7 +14,8 @@ RUN sed -i 's/#Color/Color/g' /etc/pacman.conf && \
     pacman -S --clean --clean
 
 # Distrobox Integration
-RUN git clone https://github.com/89luca89/distrobox.git --single-branch /tmp/distrobox && \
+# Use the stable shell implementation; main moved these scripts into Go assets.
+RUN git clone https://github.com/89luca89/distrobox.git --branch 1.8.2.5 --depth 1 /tmp/distrobox && \
     cp /tmp/distrobox/distrobox-host-exec /usr/bin/distrobox-host-exec && \
     ln -s /usr/bin/distrobox-host-exec /usr/bin/flatpak && \
     wget https://github.com/1player/host-spawn/releases/download/$(cat /tmp/distrobox/distrobox-host-exec | grep host_spawn_version= | cut -d "\"" -f 2)/host-spawn-$(uname -m) -O /usr/bin/host-spawn && \

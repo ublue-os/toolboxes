@@ -1,5 +1,7 @@
 ARG BASE_IMAGE=ghcr.io/ublue-os/arch-toolbox:latest
+ARG IMAGE_NAME=steambox
 FROM ${BASE_IMAGE} AS builder
+ARG IMAGE_NAME
 
 COPY ./toolboxes/steambox/files /
 
@@ -20,7 +22,6 @@ RUN pacman -Syu \
         lib32-pipewire \
         lib32-pipewire-jack \
         lib32-libpulse \
-        lib32-openal \
         xdg-desktop-portal-kde \
         vim \
         nano \
@@ -37,10 +38,12 @@ RUN pacman -Syu \
         libbsd \
         noto-fonts-cjk \
         glibc-locales \
+        simde \
         --noconfirm && \
     pacman -S \
         steam \
         lutris \
+        protontricks \
         mangohud \
         lib32-mangohud \
         --noconfirm && \
@@ -60,7 +63,6 @@ RUN useradd -m --shell=/bin/bash build && usermod -L build && \
 USER build
 WORKDIR /home/build
 RUN paru -S \
-        aur/protontricks \
         aur/vkbasalt \
         aur/lib32-vkbasalt \
         aur/obs-vkcapture-git \
@@ -85,10 +87,18 @@ RUN sed -i 's@ (Runtime)@@g' /usr/share/applications/steam.desktop && \
         /tmp/* \
         /var/cache/pacman/pkg/*
 
+# Select the desktop portal before exporting, so each variant is rechunked once.
+RUN if [ "${IMAGE_NAME}" = "steambox-gnome" ]; then \
+        pacman -Rnsdd xdg-desktop-portal-kde --noconfirm && \
+        pacman -S xdg-desktop-portal-gtk xdg-desktop-portal-gnome --noconfirm && \
+        rm -rf /var/cache/pacman/pkg/* \
+    ; fi
+
 # https://github.com/coreos/chunkah
 FROM quay.io/coreos/chunkah:latest AS chunkah
 
 # Rechunk
+ARG IMAGE_NAME
 ARG SOURCE_DATE_EPOCH
 ENV SOURCE_DATE_EPOCH=${SOURCE_DATE_EPOCH}
 RUN --mount=from=builder,src=/,target=/chunkah,ro \
@@ -96,43 +106,8 @@ RUN --mount=from=builder,src=/,target=/chunkah,ro \
     chunkah build \
     --skip-special-files \
     --max-layers 64 \
-    --label=name=steambox \
+    --label=name="${IMAGE_NAME}" \
     > /run/src/out.ociarchive
 
 # Deploy final chunked image
-FROM oci-archive:out.ociarchive AS steambox
-
-FROM builder as builder-gnome
-
-# Replace KDE portal with GNOME portal, swap included icon theme.
-RUN sed -i 's/-march=native -mtune=native/-march=x86-64 -mtune=generic/g' /etc/makepkg.conf && \
-    pacman -Rnsdd \
-        xdg-desktop-portal-kde \
-        --noconfirm && \
-    pacman -S \
-        xdg-desktop-portal-gtk \
-        xdg-desktop-portal-gnome \
-        --noconfirm && \
-    rm -rf /var/cache/pacman/pkg/*
-
-# Cleanup
-RUN sed -i 's/-march=x86-64 -mtune=generic/-march=native -mtune=native/g' /etc/makepkg.conf && \
-    rm -rf \
-        /tmp/*
-
-# https://github.com/coreos/chunkah
-FROM quay.io/coreos/chunkah:latest AS chunkah
-
-# Rechunk
-ARG SOURCE_DATE_EPOCH
-ENV SOURCE_DATE_EPOCH=${SOURCE_DATE_EPOCH}
-RUN --mount=from=builder-gnome,src=/,target=/chunkah,ro \
-    --mount=type=bind,target=/run/src,rw \
-    chunkah build \
-    --skip-special-files \
-    --max-layers 64 \
-    --label=name=steambox-gnome \
-    > /run/src/out.ociarchive
-
-# Deploy final chunked image
-FROM oci-archive:out.ociarchive AS steambox-gnome
+FROM oci-archive:out.ociarchive
