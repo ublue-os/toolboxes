@@ -122,12 +122,34 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           oci: false
           extra-args: |
-            --security-opt=seccomp=unconfined
+            --target=${{ matrix.base_name }} --security-opt=seccomp=unconfined
             --skip-unused-stages=false
           build-args: |
             BASE_IMAGE=${{ env.BASE_IMAGE }}
-            IMAGE_NAME=${{ matrix.base_name }}
             SOURCE_DATE_EPOCH=${{ steps.epoch.outputs.epoch }}
+
+      - name: Verify desktop variant
+        env:
+          BUILT_IMAGE: ${{ steps.build_image.outputs.image-with-tag }}
+        run: |
+          [[ "$(podman image inspect --format '{{ index .Config.Labels "name" }}' "$BUILT_IMAGE")" == "$IMAGE_NAME" ]]
+          podman run --rm --network=none --entrypoint=/bin/sh "$BUILT_IMAGE" -ec '
+            case "$1" in
+              steambox)
+                pacman -Q xdg-desktop-portal-kde
+                forbidden=xdg-desktop-portal-gnome
+                ;;
+              steambox-gnome)
+                pacman -Q xdg-desktop-portal-gnome xdg-desktop-portal-gtk
+                forbidden=xdg-desktop-portal-kde
+                ;;
+              *) exit 1 ;;
+            esac
+            if pacman -Q "$forbidden" >/dev/null 2>&1; then
+              echo "Unexpected portal package: $forbidden" >&2
+              exit 1
+            fi
+          ' sh "$IMAGE_NAME"
 
       - name: Remove exported archive
         run: rm -f out.ociarchive
