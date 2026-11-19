@@ -1,0 +1,2 @@
+# Renovate tracks this digest to trigger rebuilds; builds pull the tag instead.
+image: ghcr.io/ublue-os/ubuntu-toolbox:latest@sha256:2c96ba2b22a581b2375c18e82d1ad48e0ce5cb24ceff6f663319f53bb1a1feb0

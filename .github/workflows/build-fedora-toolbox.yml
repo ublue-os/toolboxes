@@ -1,8 +1,14 @@
 name: Build and Push Fedora Toolbox Image
 on:
   pull_request:
-    paths-ignore:
-      - "**.md"
+    paths:
+      - "toolboxes/fedora-toolbox/**"
+      - ".github/workflows/build-fedora-toolbox.yml"
+  push:
+    branches: [main]
+    paths:
+      - "toolboxes/fedora-toolbox/**"
+      - ".github/workflows/build-fedora-toolbox.yml"
   merge_group:
   workflow_dispatch:
 permissions: {}
@@ -30,6 +36,9 @@ jobs:
       # Checkout push-to-registry action GitHub repository
       - name: Checkout Push to Registry action
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Read base image tag
+        run: echo "BASE_IMAGE=$(yq -r '.image | split("@")[0]' toolboxes/fedora-toolbox/image-version.yaml)" >> "$GITHUB_ENV"
 
       - name: Verify Fedora distrobox
         uses: EyeCantCU/cosign-action/verify@58722a084c82190b57863002d494c91eabbe9e79 # v0.3.0
@@ -63,6 +72,7 @@ jobs:
           oci: false
           extra-args: --skip-unused-stages=false
           build-args: |
+            BASE_IMAGE=${{ env.BASE_IMAGE }}
             SOURCE_DATE_EPOCH=${{ steps.epoch.outputs.epoch }}
 
       # Workaround bug where capital letters in your GitHub username make it impossible to push to GHCR.
