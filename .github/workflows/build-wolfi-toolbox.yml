@@ -1,8 +1,14 @@
 name: Build and Push Wolfi Toolbox Image
 on:
   pull_request:
-    paths-ignore:
-      - "**.md"
+    paths:
+      - "toolboxes/wolfi-toolbox/**"
+      - ".github/workflows/build-wolfi-toolbox.yml"
+  push:
+    branches: [main]
+    paths:
+      - "toolboxes/wolfi-toolbox/**"
+      - ".github/workflows/build-wolfi-toolbox.yml"
   merge_group:
   workflow_dispatch:
 permissions: {}
@@ -31,6 +37,9 @@ jobs:
       # Checkout push-to-registry action GitHub repository
       - name: Checkout Push to Registry action
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Read base image tag
+        run: echo "BASE_IMAGE=$(yq -r '.image | split("@")[0]' toolboxes/wolfi-toolbox/image-version.yaml)" >> "$GITHUB_ENV"
 
       - name: Verify base image
         uses: EyeCantCU/cosign-action/verify@58722a084c82190b57863002d494c91eabbe9e79 # v0.3.0
@@ -65,6 +74,7 @@ jobs:
           image: ${{ matrix.image_name }}
           tags: ${{ env.IMAGE_TAGS }}
           build-args: |
+            BASE_IMAGE=${{ env.BASE_IMAGE }}
             IMAGE_NAME=${{ matrix.image_name }}
           labels: ${{ steps.meta.outputs.labels }}
           oci: false

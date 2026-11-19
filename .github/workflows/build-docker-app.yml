@@ -1,8 +1,18 @@
 name: Build and Push Docker App Toolbox
 on:
   pull_request:
-    paths-ignore:
-      - "**.md"
+    paths:
+      - "apps/docker/**"
+      - "toolboxes/ubuntu-toolbox/**"
+      - ".github/workflows/build-ubuntu-toolbox.yml"
+      - ".github/workflows/build-docker-app.yml"
+  push:
+    branches: [main]
+    paths:
+      - "apps/docker/**"
+      - "toolboxes/ubuntu-toolbox/**"
+      - ".github/workflows/build-ubuntu-toolbox.yml"
+      - ".github/workflows/build-docker-app.yml"
   merge_group:
   workflow_dispatch:
 permissions: {}
@@ -30,6 +40,9 @@ jobs:
       # Checkout push-to-registry action GitHub repository
       - name: Checkout Push to Registry action
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Read base image tag
+        run: echo "BASE_IMAGE=$(yq -r '.image | split("@")[0]' apps/docker/image-version.yaml)" >> "$GITHUB_ENV"
 
       - name: Verify Ublue-OS Ubuntu toolbox
         uses: EyeCantCU/cosign-action/verify@58722a084c82190b57863002d494c91eabbe9e79 # v0.3.0
@@ -72,6 +85,8 @@ jobs:
         id: build_image
         uses: docker/build-push-action@f9f3042f7e2789586610d6e8b85c8f03e5195baf # v7.2.0
         with:
+          build-args: |
+            BASE_IMAGE=${{ env.BASE_IMAGE }}
           push: ${{ github.event_name != 'pull_request' }}
           file: ./apps/docker/Containerfile.docker
           labels: ${{ steps.meta.outputs.labels }}

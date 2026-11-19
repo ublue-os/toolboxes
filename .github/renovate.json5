@@ -31,20 +31,25 @@
       "matchDepNames": ["quay.io/fedora/fedora-toolbox"]
     },
     {
+      "matchFileNames": ["**/image-version.yaml"],
+      "groupName": null,
+      "additionalBranchPrefix": "{{parentDir}}-"
+    },
+    {
       "automerge": true,
-      "groupName": "toolbox-images",
       "matchUpdateTypes": ["digest"],
-      "matchDepNames": [
-        "cgr.dev/chainguard/wolfi-base",
-        "docker.io/library/debian",
-        "docker.io/library/ubuntu",
-        "ghcr.io/ublue-os/fedora-toolbox",
-        "ghcr.io/ublue-os/ubuntu-toolbox",
-        "ghcr.io/ublue-os/wolfi-toolbox",
-        "ghcr.io/ublue-os/arch-toolbox",
-        "quay.io/toolbx/arch-toolbox",
-        "quay.io/fedora/fedora-toolbox"
-      ]
+      "matchFileNames": ["**/image-version.yaml"]
+    }
+  ],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "managerFilePatterns": ["/(^|/)image-version\\.yaml$/"],
+      "matchStrings": [
+        "image: (?<depName>[^\\s@]+):(?<currentValue>[^\\s@]+)@(?<currentDigest>sha256:[a-f0-9]{64})"
+      ],
+      "datasourceTemplate": "docker",
+      "versioningTemplate": "docker"
     }
   ]
 }

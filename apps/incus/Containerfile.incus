@@ -1,4 +1,5 @@
-FROM ghcr.io/ublue-os/ubuntu-toolbox@sha256:2c96ba2b22a581b2375c18e82d1ad48e0ce5cb24ceff6f663319f53bb1a1feb0
+ARG BASE_IMAGE
+FROM ${BASE_IMAGE}
 
 RUN apt-get update && \
     apt-get install -y \

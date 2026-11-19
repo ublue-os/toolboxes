@@ -1,8 +1,14 @@
 name: Build and Push Arch Toolbox
 on:
   pull_request:
-    paths-ignore:
-      - "**.md"
+    paths:
+      - "toolboxes/arch-toolbox/**"
+      - ".github/workflows/build-arch-toolbox.yml"
+  push:
+    branches: [main]
+    paths:
+      - "toolboxes/arch-toolbox/**"
+      - ".github/workflows/build-arch-toolbox.yml"
   merge_group:
   workflow_dispatch:
 permissions: {}
@@ -29,6 +35,9 @@ jobs:
       # Checkout push-to-registry action GitHub repository
       - name: Checkout Push to Registry action
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Read base image tag
+        run: echo "BASE_IMAGE=$(yq -r '.image | split("@")[0]' toolboxes/arch-toolbox/image-version.yaml)" >> "$GITHUB_ENV"
 
       - name: Matrix Variables
         run: |
@@ -104,6 +113,7 @@ jobs:
             --target=${{ matrix.base_name }} --security-opt=seccomp=unconfined
             --skip-unused-stages=false
           build-args: |
+            BASE_IMAGE=${{ env.BASE_IMAGE }}
             SOURCE_DATE_EPOCH=${{ steps.epoch.outputs.epoch }}
 
       # Workaround bug where capital letters in your GitHub username make it impossible to push to GHCR.

@@ -1,8 +1,18 @@
 name: Build and Push Incus App Toolbox
 on:
   pull_request:
-    paths-ignore:
-      - "**.md"
+    paths:
+      - "apps/incus/**"
+      - "toolboxes/ubuntu-toolbox/**"
+      - ".github/workflows/build-ubuntu-toolbox.yml"
+      - ".github/workflows/build-incus-app.yml"
+  push:
+    branches: [main]
+    paths:
+      - "apps/incus/**"
+      - "toolboxes/ubuntu-toolbox/**"
+      - ".github/workflows/build-ubuntu-toolbox.yml"
+      - ".github/workflows/build-incus-app.yml"
   merge_group:
   workflow_dispatch:
 permissions: {}
@@ -31,6 +41,9 @@ jobs:
       - name: Checkout Push to Registry action
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
+      - name: Read base image tag
+        run: echo "BASE_IMAGE=$(yq -r '.image | split("@")[0]' apps/incus/image-version.yaml)" >> "$GITHUB_ENV"
+
       - name: Verify Ublue-OS Ubuntu toolbox
         uses: EyeCantCU/cosign-action/verify@58722a084c82190b57863002d494c91eabbe9e79 # v0.3.0
         with:
@@ -57,6 +70,8 @@ jobs:
             ./apps/incus/Containerfile.incus
           image: ${{ env.IMAGE_NAME }}
           tags: ${{ env.IMAGE_TAGS }}
+          build-args: |
+            BASE_IMAGE=${{ env.BASE_IMAGE }}
           labels: ${{ steps.meta.outputs.labels }}
           oci: false
 
